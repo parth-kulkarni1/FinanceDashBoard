@@ -1,25 +1,27 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css'; // import bootstrap stylesheet
+import {BrowserRouter, Route, Routes} from 'react-router-dom'
+
+/* Import Trevor Library CSS Styling File */ 
+import '@tremor/react/dist/esm/tremor.css';
+
+/* Importing Components */
+import Header from './Components/Header/Header';
+import Dashboard from './Components/Dashboard/Dashboard';
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+
+    <BrowserRouter>
+
+      <Header />
+      <Dashboard />
+    
+    
+    </BrowserRouter>
+
   );
 }
 

@@ -1,33 +1,19 @@
-import express from "express";
-import { Request, Response } from "express";
-import axios from "axios"
-require('dotenv').config();
+import express, { Router } from "express";
+import { router } from "./Routes/Routes";
 
 const app = express();
 const port = process.env.PORT || 4000;
-
-const options = {
-    headers: {
-        Authorization: `Bearer ${process.env.TOKEN}`
-    }
+const cors = require('cors')
+const cors_options = {
+  origin: "http://localhost:3000",
+  credentials: true
 }
 
+
 app.use(express.json());
-
-
-app.get('/accounts', async function (req: Request, res: Response) {
-
-    const url = "https://api.up.com.au/api/v1/accounts"
-   
-   const {data} : any =  await axios.get(url, options);
-
-   console.log(data, "Data")
-
-
-   res.send(data)
-
-    
-})
+app.use(cors(cors_options))
+app.use(router)
+app.set('trust proxy', 1)
 
 app.listen(port, () => console.log("sucessfully created on port 4000"));
 
