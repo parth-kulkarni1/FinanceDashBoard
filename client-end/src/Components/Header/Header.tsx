@@ -23,7 +23,7 @@ function Header(){
     return(
         <Navbar bg = "light" expand = "lg">
             <Container>
-                <Navbar.Brand>Welcome To Your Dashboard</Navbar.Brand>
+                <Navbar.Brand> ⚡️Welcome To Your Dashboard</Navbar.Brand>
                 <Navbar.Brand>Current Saving's Balance: ${balance ? balance : 0} </Navbar.Brand>
             </Container>
 

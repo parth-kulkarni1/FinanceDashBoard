@@ -19,8 +19,8 @@ exports.router = router;
 router.get('/accounts/transactional', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const accounts = yield up.accounts.retrieve();
-            res.json(accounts);
+            const accounts = yield up.accounts.retrieve(process.env.TRANSACTIONAL_ID);
+            res.json(accounts.data);
         }
         catch (e) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {
@@ -35,9 +35,24 @@ router.get('/accounts/transactional', function (req, res) {
 router.get('/accounts/savings', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const accounts = yield up.accounts.retrieve();
-            const savingAccount = accounts.data[1].attributes.balance;
-            res.json(savingAccount);
+            const savingAccount = yield up.accounts.retrieve(process.env.SAVERS_ID);
+            res.json(savingAccount.data);
+        }
+        catch (e) {
+            if ((0, up_bank_api_1.isUpApiError)(e)) {
+                // Handle error returned from Up API
+                console.log(e.response.data.errors);
+            }
+            // Unexpected error
+            throw e;
+        }
+    });
+});
+router.get('/accounts/transactional/transactions', function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const transactions = yield up.transactions.list();
+            res.json(transactions);
         }
         catch (e) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {
