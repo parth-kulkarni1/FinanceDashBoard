@@ -41,6 +41,15 @@ export async function getTransactions(){
 }
 
 
+export async function getMonthlyTransactionalTotal(){
+    const {data} = await axios.get<string>('/accounts/trasactional/monthly')
+
+    return data
+
+
+}
+
+
 
 
 

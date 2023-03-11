@@ -7,7 +7,8 @@ import { AccountResource } from "up-bank-api";
 
 interface AccountsProps{
     savings: AccountResource,
-    transactional: AccountResource
+    transactional: AccountResource,
+    monthlyTotal: string
 }
 
 
@@ -18,6 +19,8 @@ function Accounts(props: AccountsProps){
         <div>
 
                 {!!props.savings && !!props.transactional && 
+
+                <div>
        
                 <Card maxWidth="max-w-md" marginTop="mt-5" decoration="top" decorationColor="indigo">
 
@@ -42,16 +45,31 @@ function Accounts(props: AccountsProps){
                     
                     </Flex>
 
-
-                    
-
-
-                  
                 </Card>
+
+
+<div>
+
+<Card maxWidth="max-w-md" marginTop="mt-5" decoration="top" decorationColor="indigo">
+
+    <Text>Your Current Monthly Spend Is: </Text>
+
+    <Metric>$ {props.monthlyTotal}</Metric>
+
+
+</Card>
+
+</div>
+
+</div>
 
                 }
 
         </div>
+
+ 
+
+
     )
 
 }

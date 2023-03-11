@@ -6,8 +6,9 @@ import Accounts from 'Components/AccountsInformation/Accounts';
 /* Run relevant axios calls here to fetch information such as saving balances, transactional savings etc, then pass it down as props, 
 to the relevant components */
 
-import { getSavingsAccount, getTransactionalAccount, getTransactions } from "Components/Axios/AxiosCommands";
+import { getMonthlyTransactionalTotal, getSavingsAccount, getTransactionalAccount, getTransactions } from "Components/Axios/AxiosCommands";
 import { AccountResource, ListTransactionsResponse } from 'up-bank-api';
+import TransactionsTable from 'Components/AccountsInformation/TransactionalTable';
 
 
 
@@ -20,6 +21,9 @@ function Dashboard(){
 
   const [transactions,setTransactions] = useState<ListTransactionsResponse | null>(null);
 
+  const [transactionMonthlyTotal,setTransactionMonthlyTotal] = useState<string | null>(null);
+
+
 
   useEffect(() => {
 
@@ -31,6 +35,9 @@ function Dashboard(){
 
       await getTransactions().then(result => setTransactions(result)).catch(err => console.log(err));
 
+      await getMonthlyTransactionalTotal().then(result => setTransactionMonthlyTotal(result)).catch(err => console.log(err));
+      
+
     }
 
     getInformationUser();
@@ -40,7 +47,11 @@ function Dashboard(){
     return(
         <div>
 
-          <Accounts savings={savingAccount} transactional = {trasactionalAccount}/>
+          <Accounts savings={savingAccount} transactional = {trasactionalAccount} 
+                    monthlyTotal = {transactionMonthlyTotal}/>
+
+
+          <TransactionsTable transactions={transactions} />
             
         </div>
     )
