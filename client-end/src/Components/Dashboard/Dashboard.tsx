@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 
 /* Importing of components */
 import Accounts from 'Components/AccountsInformation/Accounts';
@@ -8,7 +8,8 @@ to the relevant components */
 
 import { getMonthlyTransactionalTotal, getSavingsAccount, getTransactionalAccount, getTransactions } from "Components/Axios/AxiosCommands";
 import { AccountResource, ListTransactionsResponse } from 'up-bank-api';
-import TransactionsTable from 'Components/AccountsInformation/TransactionalTable';
+import TransactionsTable from 'Components/TransactionalTable/TransactionalTable';
+import { UpContext } from 'Components/Context/UpContext';
 
 
 
@@ -23,6 +24,7 @@ function Dashboard(){
 
   const [transactionMonthlyTotal,setTransactionMonthlyTotal] = useState<string | null>(null);
 
+  const {state,dispatch} = useContext(UpContext);
 
 
   useEffect(() => {

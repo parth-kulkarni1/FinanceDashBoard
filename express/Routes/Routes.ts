@@ -1,10 +1,11 @@
 import express, { Express, NextFunction, Router } from "express";
-import { UpApi, isUpApiError, ListAccountResponse} from "up-bank-api";
+import { UpApi, isUpApiError, ListTransactionsResponse} from "up-bank-api";
 import { Request, Response } from "express";
 require('dotenv').config();
 
 
 import moment from "moment";
+import axios from "axios";
 
 const up = new UpApi(process.env.TOKEN);
 const router = Router();
@@ -119,6 +120,24 @@ router.get('/accounts/trasactional/monthly', async function (req:Request, res: R
   }
 
 
+})
+
+router.get('/transactions/next', async function(req: Request, res:Response){
+
+  try{
+
+    const next = req.query.link as string;
+    
+    const {data} = await axios.get<ListTransactionsResponse>(next, { headers: {"Authorization" : `Bearer ${process.env.TOKEN}`} })
+
+    res.json(data)
+    
+
+  } catch(e){
+    if (isUpApiError(e)) {
+      console.log(e.response.data.errors)
+    }
+  }
 
 
 

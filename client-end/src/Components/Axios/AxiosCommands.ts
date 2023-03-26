@@ -46,6 +46,19 @@ export async function getMonthlyTransactionalTotal(){
 
     return data
 
+}
+
+export async function getNextTransaction(api_link: string){
+    const {data} = await axios.get<ListTransactionsResponse>('/transactions/next', {
+        params: {
+            link: api_link
+        }
+    })
+
+    console.log(data, "axios response")
+
+    return data
+
 
 }
 
