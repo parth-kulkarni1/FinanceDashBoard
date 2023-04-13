@@ -1,24 +1,18 @@
-import React, {useState, useEffect} from "react";
+import React, {useContext} from "react";
 
+import { UpContext } from "Components/Context/UpContext";
 
 import { Card, Metric, Text, Flex } from "@tremor/react";
-import { AccountResource } from "up-bank-api";
 
 
-interface AccountsProps{
-    savings: AccountResource,
-    transactional: AccountResource,
-    monthlyTotal: string
-}
+function Accounts(){
 
-
-function Accounts(props: AccountsProps){
-
+    const {state}= useContext(UpContext);
 
     return(
         <div>
 
-                {!!props.savings && !!props.transactional && 
+            {state.savingsAccountBalance && state.trasactionalAccountBalance &&
 
                 <div>
        
@@ -28,16 +22,16 @@ function Accounts(props: AccountsProps){
 
                         <div>
 
-                            <Text>{props.transactional.attributes.displayName} Account</Text>
-                            <Metric>${props.transactional.attributes.balance.value}</Metric>
+                            <Text>{state.trasactionalAccountBalance.attributes.displayName} Account</Text>
+                            <Metric>${state.trasactionalAccountBalance.attributes.balance.value}</Metric>
 
 
                         </div>
 
                         <div>
            
-                            <Text>{props.savings.attributes.displayName} Account</Text>
-                            <Metric>${props.savings.attributes.balance.value}</Metric>
+                            <Text>{state.savingsAccountBalance.attributes.displayName} Account</Text>
+                            <Metric>${state.savingsAccountBalance.attributes.balance.value}</Metric>
         
                         </div>
 
@@ -48,31 +42,24 @@ function Accounts(props: AccountsProps){
                 </Card>
 
 
-<div>
+                <div>
 
-<Card maxWidth="max-w-md" marginTop="mt-5" decoration="top" decorationColor="indigo">
+                    <Card maxWidth="max-w-md" marginTop="mt-5" decoration="top" decorationColor="indigo">
 
-    <Text>Your Current Monthly Spend Is: </Text>
+                        <Text>Your Current Monthly Spend Is: </Text>
 
-    <Metric>$ {props.monthlyTotal}</Metric>
+                        <Metric>$ {state.monthlySpendingTotal}</Metric>
+                    </Card>
 
+                </div>
 
-</Card>
+                </div>
 
-</div>
-
-</div>
-
-                }
+            }
 
         </div>
 
- 
-
-
-    )
-
-}
+    )}
 
 
 export default Accounts;

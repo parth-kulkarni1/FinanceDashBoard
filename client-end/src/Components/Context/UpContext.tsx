@@ -2,27 +2,32 @@
 // Easier to do than keep managing props, and for scalibility
 
 import React, {createContext, ReactNode, useReducer} from "react";
-import { AccountResource, ListTransactionsResponse } from "up-bank-api";
+import { AccountResource, ListTransactionsResponse, TransactionResource } from "up-bank-api";
 import { UpReducer } from "./UpReducer";
 
 
 
 export interface CurrentState{
-    savingsAccount: AccountResource | null,
-    trasactionalAccount: AccountResource | null,
-    transactionsList: ListTransactionsResponse | null
+    savingsAccountBalance: AccountResource | null,
+    trasactionalAccountBalance: AccountResource | null,
+    transactionsList: ListTransactionsResponse | null,
+    monthlySpendingTotal: string | null, 
+    transactionIndividual: TransactionResource | null
 }
 
 const initalState: CurrentState = {    
-    savingsAccount: null,
-    trasactionalAccount: null, 
-    transactionsList: null
+    savingsAccountBalance: null,
+    trasactionalAccountBalance: null, 
+    transactionsList: null,
+    monthlySpendingTotal: null,
+    transactionIndividual: null
 }
 
 
+
 export type CurrentAction = {
-    type: 'hey'
-    payload: string
+    type: 'savingAccountBalance' | 'transactionalAccountBalance'| 'getTransactions' | 'getMonthlySpending' | 'transactionIndividual'
+    payload: AccountResource | ListTransactionsResponse | TransactionResource | string | null
             
 }
 

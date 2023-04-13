@@ -107,3 +107,37 @@ router.get('/transactions/next', function (req, res) {
         }
     });
 });
+router.get('/transactional/:id', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const description = req.params.id;
+            const optionsSearch = {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json',
+                    Referer: 'http://localhost'
+                }
+            };
+            const optionsReterive = {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json',
+                    Authorization: `Bearer ${process.env.BRAND_FETCH_TOKEN}`
+                }
+            };
+            const { data } = yield axios_1.default.get(`https://api.brandfetch.io/v2/search/${description}`, optionsSearch);
+            const updated = data.filter((val) => val.name == description);
+            if (updated.length) { // Make another axios call to reterive more information about the merchant. The search returns a less detailed result
+                const { data } = yield axios_1.default.get(`https://api.brandfetch.io/v2/brands/${updated[0].domain}`, optionsReterive);
+                console.log(data);
+                res.json({ "brandInfo": updated[0], "domainInfo": data });
+            }
+            else {
+                res.json(null);
+            }
+        }
+        catch (e) {
+            res.json(e);
+        }
+    });
+});

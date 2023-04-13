@@ -9,6 +9,7 @@ import '@tremor/react/dist/esm/tremor.css';
 import Header from './Components/Header/Header';
 import Dashboard from './Components/Dashboard/Dashboard';
 import TransactionIndividaul from 'Components/TransactionIndividual/TransactionIndividual';
+import { UpContextProvider } from 'Components/Context/UpContext';
 
 
 
@@ -16,7 +17,7 @@ function App() {
   return (
 
     <BrowserRouter>
-
+    <UpContextProvider>
       <Header />
 
       <Routes>
@@ -25,6 +26,8 @@ function App() {
         <Route path = "/transaction/:transactionId" element = {<TransactionIndividaul />}></Route>
 
       </Routes>
+
+    </UpContextProvider>
  
     
     </BrowserRouter>

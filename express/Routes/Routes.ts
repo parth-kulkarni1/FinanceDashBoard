@@ -6,6 +6,7 @@ require('dotenv').config();
 
 import moment from "moment";
 import axios from "axios";
+import { brandFetchReterive } from "../Types/Axios/typeAxios";
 
 const up = new UpApi(process.env.TOKEN);
 const router = Router();
@@ -140,6 +141,56 @@ router.get('/transactions/next', async function(req: Request, res:Response){
   }
 
 
+
+})
+
+router.get('/transactional/:id', async function (req:Request, res: Response, next: NextFunction){
+
+  try{
+
+    const description = req.params.id; 
+
+    const optionsSearch = {
+      method: 'GET', 
+      headers: {
+        accept: 'application/json',
+        Referer: 'http://localhost'
+      }
+
+    }
+
+    const optionsReterive = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${process.env.BRAND_FETCH_TOKEN}`
+      }
+    };
+    
+
+    const {data} = await axios.get<any>(`https://api.brandfetch.io/v2/search/${description}`, optionsSearch)
+    
+    const updated = data.filter((val:any) => val.name == description)
+
+    if(updated.length){ // Make another axios call to reterive more information about the merchant. The search returns a less detailed result
+
+      const {data} = await axios.get<any>(`https://api.brandfetch.io/v2/brands/${updated[0].domain}`, optionsReterive)
+
+      console.log(data)
+
+      res.json({"brandInfo": updated[0], "domainInfo": data})
+    }
+
+    else{
+      res.json(null)
+    }
+
+  
+  } catch(e){
+
+    res.json(e)
+
+  }
 
 })
 

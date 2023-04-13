@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import {useNavigate } from "react-router-dom";
 import { getNextTransaction } from "Components/Axios/AxiosCommands";
-
+import { UpContext } from "Components/Context/UpContext";
 
 import {
   Card,
@@ -16,50 +16,45 @@ import {
   Flex,
 } from "@tremor/react";
 
-import {ListTransactionsResponse } from "up-bank-api";
 
-interface TransactionsTableProps{
-    transactions: ListTransactionsResponse
-}
+function TransactionsTable(){
 
-function TransactionsTable(props: TransactionsTableProps){
+    const {state, dispatch} = useContext(UpContext)
 
-    const [transactions, setTransactions] = useState<ListTransactionsResponse | null>(props.transactions)
 
     const naviagte = useNavigate();
 
-    useEffect(() =>{
-
-        setTransactions(props.transactions)
-
-    }, [props.transactions])
 
     async function handlePagination(event: React.FormEvent<HTMLButtonElement>){
 
         let link = ""
 
         if(event.currentTarget.value === "prev"){
-            link = transactions.links.prev
+            link = state.transactionsList.links.prev
         }
 
         else{
-            link = transactions.links.next
+            link = state.transactionsList.links.next
         }
 
         if(link){ // Link exists and is not null
 
             const result = await getNextTransaction(link)
 
-            setTransactions(result)
+            dispatch({type: 'getTransactions', payload: result})
 
         }
 
     }
 
 
-    function handleTransaction(event: React.FormEvent<HTMLElement>){
+    function handleTransaction(event:React.FormEvent<HTMLButtonElement>){
 
-        naviagte(`/transaction/${event.currentTarget.id}`)
+        const transaction = state.transactionsList.data.find(item => item.id === event.currentTarget.value)
+
+        dispatch({type: 'transactionIndividual', payload: transaction })
+
+        naviagte(`/transaction/${transaction.id}`)
 
     }
 
@@ -69,7 +64,7 @@ function TransactionsTable(props: TransactionsTableProps){
 
         <div>
 
-        {!!transactions &&
+        {state.transactionsList &&
 
         <Card marginTop="mt-10" maxWidth="max-w-4xl">
 
@@ -101,13 +96,14 @@ function TransactionsTable(props: TransactionsTableProps){
                     </TableRow>
                 </TableHead>
 
+               
 
                 <TableBody>
-                    {transactions.data.map((item) => (
+                    {state.transactionsList.data.map((item) => (
                         <TableRow key={item.id}>
                             <TableCell>
-                                   <p id = {item.id} onClick={handleTransaction}>{item.attributes.description}</p>
-
+                                   <Button size="xs" value={item.id} variant="light" onClick={handleTransaction}>
+                                    {item.attributes.description}</Button>
                             </TableCell>
 
                             <TableCell>
@@ -135,20 +131,23 @@ function TransactionsTable(props: TransactionsTableProps){
 
 
                     ))}
+                    
 
 
 
                 </TableBody>
+
+                
 
 
             </Table>
 
 
             <Flex>
-            <Button disabled = {transactions.links.prev ? false : true} value = "prev" onClick={handlePagination}>Previous</Button>
+            <Button disabled = {state.transactionsList.links.prev ? false : true} value = "prev" onClick={handlePagination}>Previous</Button>
 
 
-            <Button disabled = {transactions.links.next ? false : true} value = "next" onClick={handlePagination}>Next</Button>
+            <Button disabled = {state.transactionsList.links.next ? false : true} value = "next" onClick={handlePagination}>Next</Button>
 
             </Flex>
 
