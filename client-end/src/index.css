@@ -12,6 +12,6 @@ code {
     monospace;
 }
 
-.d-flex{
+.flex-gap-20{
   gap: 20px;
 }

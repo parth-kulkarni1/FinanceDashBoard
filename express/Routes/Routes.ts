@@ -57,7 +57,7 @@ router.get('/accounts/transactional/transactions', async function (req: Request,
 
   try{
 
-      const transactions = await up.transactions.list();
+      const transactions = await up.transactions.listByAccount(process.env.TRANSACTIONAL_ID as string);
       
       res.json(transactions)
       
@@ -170,13 +170,18 @@ router.get('/transactional/:id', async function (req:Request, res: Response, nex
 
     const {data} = await axios.get<any>(`https://api.brandfetch.io/v2/search/${description}`, optionsSearch)
     
-    const updated = data.filter((val:any) => val.name == description)
+    const updated = data.filter((val:any) => val.name == description || val.domain.includes('au'))
 
     if(updated.length){ // Make another axios call to reterive more information about the merchant. The search returns a less detailed result
 
       const {data} = await axios.get<any>(`https://api.brandfetch.io/v2/brands/${updated[0].domain}`, optionsReterive)
 
       console.log(data)
+
+      updated[0].domain = "https://" + updated[0].domain // Update the domain link
+
+      data.domain = "https://" + data.domain // Update the domain link
+
 
       res.json({"brandInfo": updated[0], "domainInfo": data})
     }
@@ -188,8 +193,47 @@ router.get('/transactional/:id', async function (req:Request, res: Response, nex
   
   } catch(e){
 
+    next(e)
+
     res.json(e)
 
+  }
+
+})
+
+
+router.post('/transactional/category', async function(req: Request, res:Response, next: NextFunction){
+
+  try{
+
+    const categoryDescription = req.body.categoryName
+    const merchantName = req.body.merchantName
+
+    const transactionsCategorised = await up.transactions.list({filterCategory: categoryDescription})
+
+    const updated = transactionsCategorised.data.filter((val:any) => val.attributes.description === merchantName)
+
+
+    // Now lets do some maths on the calculations..
+
+    const numberOfTransactions = updated.length;
+    let sumOfTransactions = 0;
+
+    for(let i = 0; i < updated.length; i ++){
+
+
+      sumOfTransactions += (Math.abs(parseFloat(updated[i].attributes.amount.value)))
+
+    }
+
+    const average = (sumOfTransactions / numberOfTransactions)
+
+    const userMerchantSummary = {numberOfTransactions: numberOfTransactions, sumOfTransactions: sumOfTransactions, averageOfTransactions: average}
+
+    res.json({transactionSummary: userMerchantSummary, pastTransactionsList: updated})
+
+  } catch(e){
+    console.log(e)
   }
 
 })

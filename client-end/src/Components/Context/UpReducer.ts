@@ -1,5 +1,5 @@
 import { AccountResource, ListTransactionsResponse, TransactionResource } from "up-bank-api";
-import { CurrentState, CurrentAction } from "./UpContext";
+import { CurrentState, CurrentAction, TransactionInsightType } from "./UpContext";
 
 export function UpReducer(state: CurrentState, action: CurrentAction): CurrentState{
     switch(action.type){
@@ -28,6 +28,11 @@ export function UpReducer(state: CurrentState, action: CurrentAction): CurrentSt
             const transactionIndividualPayload = action.payload as TransactionResource
 
             return {...state, transactionIndividual: transactionIndividualPayload}
+
+        case 'transactionInsight':
+            const transactionInsightPayload = action.payload as TransactionInsightType
+
+            return {...state, transactionInsight: transactionInsightPayload}
 
         default:
             return state;

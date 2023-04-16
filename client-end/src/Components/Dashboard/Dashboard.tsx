@@ -2,13 +2,11 @@ import React, {useEffect, useContext} from 'react';
 
 /* Importing of components */
 import Accounts from 'Components/AccountsInformation/Accounts';
-
-/* Run relevant axios calls here to fetch information such as saving balances, transactional savings etc, then pass it down as props, 
-to the relevant components */
-
 import { getMonthlyTransactionalTotal, getSavingsAccount, getTransactionalAccount, getTransactions } from "Components/Axios/AxiosCommands";
 import TransactionsTable from 'Components/TransactionalTable/TransactionalTable';
 import { UpContext } from 'Components/Context/UpContext';
+
+/* Import of 3rd party libraries */ 
 
 
 

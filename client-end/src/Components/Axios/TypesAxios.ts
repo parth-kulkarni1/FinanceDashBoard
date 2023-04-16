@@ -1,3 +1,5 @@
+import { TransactionResource } from "up-bank-api"
+
 type BrandFetchLinks = {
     name: string, 
     url: string
@@ -26,7 +28,7 @@ type brandFetchReterive = {
 
 }
 
-type brandFetchSearch = {
+export type brandFetchSearch = {
     claimed: string, 
     name: string, 
     domain: string, 
@@ -37,4 +39,15 @@ type brandFetchSearch = {
 export type merchantResponse = {
     brandInfo: brandFetchSearch, 
     domainInfo: brandFetchReterive
+}
+
+type transactionSummary = {
+    numberOfTransactions: number, 
+    sumOfTransactions: number, 
+    averageOfTransactions: number
+}
+
+export type pastTransactionsHistory = {
+    transactionSummary :  transactionSummary
+    pastTransactionsList: TransactionResource[]
 }

@@ -56,7 +56,7 @@ router.get('/accounts/savings', function (req, res) {
 router.get('/accounts/transactional/transactions', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const transactions = yield up.transactions.list();
+            const transactions = yield up.transactions.listByAccount(process.env.TRANSACTIONAL_ID);
             res.json(transactions);
         }
         catch (e) {
@@ -126,10 +126,12 @@ router.get('/transactional/:id', function (req, res, next) {
                 }
             };
             const { data } = yield axios_1.default.get(`https://api.brandfetch.io/v2/search/${description}`, optionsSearch);
-            const updated = data.filter((val) => val.name == description);
+            const updated = data.filter((val) => val.name == description || val.domain.includes('au'));
             if (updated.length) { // Make another axios call to reterive more information about the merchant. The search returns a less detailed result
                 const { data } = yield axios_1.default.get(`https://api.brandfetch.io/v2/brands/${updated[0].domain}`, optionsReterive);
                 console.log(data);
+                updated[0].domain = "https://" + updated[0].domain; // Update the domain link
+                data.domain = "https://" + data.domain; // Update the domain link
                 res.json({ "brandInfo": updated[0], "domainInfo": data });
             }
             else {
@@ -137,7 +139,30 @@ router.get('/transactional/:id', function (req, res, next) {
             }
         }
         catch (e) {
+            next(e);
             res.json(e);
+        }
+    });
+});
+router.post('/transactional/category', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const categoryDescription = req.body.categoryName;
+            const merchantName = req.body.merchantName;
+            const transactionsCategorised = yield up.transactions.list({ filterCategory: categoryDescription });
+            const updated = transactionsCategorised.data.filter((val) => val.attributes.description === merchantName);
+            // Now lets do some maths on the calculations..
+            const numberOfTransactions = updated.length;
+            let sumOfTransactions = 0;
+            for (let i = 0; i < updated.length; i++) {
+                sumOfTransactions += (Math.abs(parseFloat(updated[i].attributes.amount.value)));
+            }
+            const average = (sumOfTransactions / numberOfTransactions);
+            const userMerchantSummary = { numberOfTransactions: numberOfTransactions, sumOfTransactions: sumOfTransactions, averageOfTransactions: average };
+            res.json({ transactionSummary: userMerchantSummary, pastTransactionsList: updated });
+        }
+        catch (e) {
+            console.log(e);
         }
     });
 });

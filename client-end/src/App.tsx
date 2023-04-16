@@ -6,9 +6,14 @@ import {BrowserRouter, Route, Routes, Link} from 'react-router-dom'
 import '@tremor/react/dist/esm/tremor.css';
 
 /* Importing Components */
+
+import Home from 'Components/HomePage/Home';
+import Footer from 'Components/Header/Footer';
+
 import Header from './Components/Header/Header';
 import Dashboard from './Components/Dashboard/Dashboard';
 import TransactionIndividaul from 'Components/TransactionIndividual/TransactionIndividual';
+import TransactionInsight from 'Components/TransactionInsight/TransactionInsight';
 import { UpContextProvider } from 'Components/Context/UpContext';
 
 
@@ -22,12 +27,16 @@ function App() {
 
       <Routes>
 
-        <Route path = "/" element = {<Dashboard />}></Route>
+        <Route path = "/" element = {<Home />}></Route>
+        <Route path = "/dashboard" element = {<Dashboard />}></Route>
         <Route path = "/transaction/:transactionId" element = {<TransactionIndividaul />}></Route>
+        <Route path = "/transaction/insight/:transactionId" element = {<TransactionInsight />}></Route>
 
       </Routes>
 
     </UpContextProvider>
+
+    <Footer />
  
     
     </BrowserRouter>

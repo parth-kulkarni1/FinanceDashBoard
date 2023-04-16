@@ -1,6 +1,8 @@
 import axios from 'axios'
-import {AccountResource, ListTransactionsResponse} from 'up-bank-api'
-import {merchantResponse } from './TypesAxios';
+import {AccountResource, ListTransactionsResponse, TransactionResource} from 'up-bank-api'
+import {merchantResponse, pastTransactionsHistory } from './TypesAxios';
+
+import { UpApi, UpApiError, UpClient } from 'up-bank-api';
 
 /* This contains all axios commands made to the backend */
 
@@ -72,6 +74,16 @@ export async function getTransactionInformation(description: string){
     console.log(data, "indiviudal transact")
 
     return data;
+
+}
+
+export async function getPreviousTransactions(obj: any){
+    const {data} = await axios.post<pastTransactionsHistory>(`/transactional/category`, obj)
+
+    console.log(data, "previous trasnactions")
+
+    return data;
+
 
 
 }

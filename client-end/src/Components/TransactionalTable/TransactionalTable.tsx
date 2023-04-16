@@ -16,10 +16,17 @@ import {
   Flex,
 } from "@tremor/react";
 
+import { Modal } from "react-bootstrap";
+
+import moment from 'moment';
+
+
 
 function TransactionsTable(){
 
     const {state, dispatch} = useContext(UpContext)
+
+    const [showModal, setModal] = useState<boolean>(false);
 
 
     const naviagte = useNavigate();
@@ -47,6 +54,16 @@ function TransactionsTable(){
 
     }
 
+    function handleTransfer(event: React.FormEvent<HTMLButtonElement>){
+
+        const transaction = state.transactionsList.data.find(item => item.id === event.currentTarget.value)
+
+        dispatch({type: 'transactionIndividual', payload: transaction})
+
+        setModal(true)
+
+    }
+
 
     function handleTransaction(event:React.FormEvent<HTMLButtonElement>){
 
@@ -62,7 +79,7 @@ function TransactionsTable(){
 
     return(
 
-        <div>
+        <div className="pb-5">
 
         {state.transactionsList &&
 
@@ -102,9 +119,21 @@ function TransactionsTable(){
                     {state.transactionsList.data.map((item) => (
                         <TableRow key={item.id}>
                             <TableCell>
-                                   <Button size="xs" value={item.id} variant="light" onClick={handleTransaction}>
+
+                                {item.relationships.transferAccount.data || item.attributes.amount.valueInBaseUnits >=0 ? 
+
+                                    <Button size="xs" value={item.id} variant="light" onClick={handleTransfer}>
                                     {item.attributes.description}</Button>
-                            </TableCell>
+
+                                    :
+                                    <Button size="xs" value={item.id} variant="light" onClick={handleTransaction}>
+                                    {item.attributes.description}</Button>
+
+
+                            }
+
+
+                           </TableCell>
 
                             <TableCell>
                                 {item.attributes.amount.currencyCode}
@@ -123,7 +152,7 @@ function TransactionsTable(){
                             </TableCell>
 
                             <TableCell>
-                                {item.attributes.createdAt}
+                                {moment(item.attributes.createdAt).format('LL')}
                             </TableCell>
 
                         </TableRow>
@@ -157,7 +186,23 @@ function TransactionsTable(){
 
         </Card>
 
-                    }
+        }
+
+        {showModal && 
+
+            <Modal show={showModal} onHide={() => setModal(false)} centered={true}> 
+                <Modal.Header closeButton>
+                    <Modal.Title>{state.transactionIndividual.attributes.description}</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>{state.transactionIndividual.attributes.amount.value}</Modal.Body>
+                
+            
+            </Modal>
+        
+        }
+
+
 
 </div>
 
