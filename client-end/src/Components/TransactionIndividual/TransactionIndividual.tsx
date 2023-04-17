@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { UpContext } from "Components/Context/UpContext";
 import { getTransactionInformation, getPreviousTransactions } from "Components/Axios/AxiosCommands";
 import { merchantResponse, pastTransactionsHistory } from "Components/Axios/TypesAxios";
-import transactionUpdate from "Components/TransactionUpdate/TransactionUpdate";
 
 import { Card, Title, Subtitle, Divider } from "@tremor/react";
 import moment from "moment";
@@ -23,12 +22,15 @@ function TransactionIndividaul(){ // This component will list each each transact
 
     const navigate = useNavigate();
 
-    const merchantName = state.transactionIndividual.attributes.description; 
-    const categoryName = state.transactionIndividual.relationships.category.data.id;
-
     useEffect(() => {
 
+
+
         async function getTransactInformation(){
+            
+            const merchantName = state.transactionIndividual.attributes.description; 
+            const categoryName = state.transactionIndividual.relationships.category.data.id;
+
             await getTransactionInformation(state.transactionIndividual.attributes.description).then(result => setInfo(result))
                                             .catch(err => console.log(err))
 
@@ -37,7 +39,17 @@ function TransactionIndividaul(){ // This component will list each each transact
         
         }
 
-        getTransactInformation();
+        
+        if(state.transactionIndividual === null){
+            navigate('/dashboard')
+        }
+
+        else{
+            
+            getTransactInformation();
+
+
+        }
 
 
     }, [])
@@ -52,7 +64,10 @@ function TransactionIndividaul(){ // This component will list each each transact
 
 
     return(
+
         <div className="p-5">
+
+        {state.transactionIndividual && 
 
             <Card decoration="bottom" decorationColor="indigo">
               <div className="d-flex flex-column flex-gap-20">
@@ -226,7 +241,7 @@ function TransactionIndividaul(){ // This component will list each each transact
 
                 <Card>
 
-                    <h3>Summary of Past Transactions with {merchantName}</h3>
+                    <h3>Summary of Past Transactions with {state.transactionIndividual.attributes.description}</h3>
                     <Divider />
 
                     {previousTransactions && 
@@ -255,6 +270,7 @@ function TransactionIndividaul(){ // This component will list each each transact
 
     </Card>
 
+    }
 
 
 

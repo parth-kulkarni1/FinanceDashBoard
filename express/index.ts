@@ -1,5 +1,7 @@
 import express, { Router } from "express";
 import { router } from "./Routes/Routes";
+import session from "express-session";
+
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -12,6 +14,16 @@ const cors_options = {
 
 app.use(express.json());
 app.use(cors(cors_options))
+
+app.use(
+  session({
+      secret: 'keyboard cat',
+      saveUninitialized: false, // Sets a cookie in the browser by default .. true for now
+      cookie: { httpOnly: true, maxAge:15000000, secure: 'auto'},
+      resave: false, 
+  }),
+);
+
 app.use(router)
 app.set('trust proxy', 1)
 

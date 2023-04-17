@@ -1,10 +1,22 @@
 import axios from 'axios'
-import {AccountResource, ListTransactionsResponse, TransactionResource} from 'up-bank-api'
+import {AccountResource, ListTransactionsResponse, Pong, TransactionResource, isUpApiError} from 'up-bank-api'
 import {merchantResponse, pastTransactionsHistory } from './TypesAxios';
 
-import { UpApi, UpApiError, UpClient } from 'up-bank-api';
 
 /* This contains all axios commands made to the backend */
+
+
+
+export async function verifyToken(token: string){
+
+    const {data} = await axios.get<any>(`/login/${token}`)
+
+    console.log(data, "login res")
+
+    return data
+
+}
+
 
 export async function getTransactionalAccount(){
     

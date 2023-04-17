@@ -3,21 +3,70 @@ import { UpApi, isUpApiError, ListTransactionsResponse} from "up-bank-api";
 import { Request, Response } from "express";
 require('dotenv').config();
 
-
 import moment from "moment";
 import axios from "axios";
 import { brandFetchReterive } from "../Types/Axios/typeAxios";
 
-const up = new UpApi(process.env.TOKEN);
+import session from "express-session";
+
+
+
+const up = new UpApi();
+
+let TRANSACTIONAL_ID = ""
+let SAVERS_ID = ""
+
 const router = Router();
 
+declare module 'express-session' { interface Session { cookieGen: string}}
+
+
+router.get('/login/:id', async function(req:Request, res:Response, next:NextFunction) {
+
+  try{
+      const token = req.params.id
+
+      up.updateApiKey(token)
+
+      const authenticated = await up.util.ping()
+
+      req.session.cookieGen = token // set cookie to login
+      
+      res.json(authenticated)
+
+  } catch(e){
+
+    if (isUpApiError(e)) {
+      // Handle error returned from Up API
+      res.json(null)
+    }
+    
+  }
+
+  })
 
 router.get('/accounts/transactional', async function (req: Request, res: Response) {
 
     try {
-        const accounts = await up.accounts.retrieve(process.env.TRANSACTIONAL_ID as string)
 
-        res.json(accounts.data)
+      if(req.session.cookieGen){
+
+
+        const accounts = await up.accounts.list()
+
+        TRANSACTIONAL_ID = accounts.data.find(val => val.attributes.accountType == "TRANSACTIONAL")?.id as string
+
+        const tranactionalAccount = await up.accounts.retrieve(TRANSACTIONAL_ID as string)
+
+        res.json(tranactionalAccount.data)
+
+      }
+
+      else{
+        return res.redirect('/')
+      }
+
+
       } catch (e) {
         if (isUpApiError(e)) {
           // Handle error returned from Up API
@@ -34,10 +83,14 @@ router.get('/accounts/transactional', async function (req: Request, res: Respons
 router.get('/accounts/savings', async function (req: Request, res: Response) {
 
   try {
-      const savingAccount = await up.accounts.retrieve(process.env.SAVERS_ID as string)
 
+        const accounts = await up.accounts.list()
 
-      res.json(savingAccount.data);
+        SAVERS_ID = accounts.data.find(val => val.attributes.accountType == "SAVER")?.id as string
+
+        const savingsAccount = await up.accounts.retrieve(SAVERS_ID as string)
+
+      res.json(savingsAccount.data);
 
     } catch (e) {
       if (isUpApiError(e)) {
@@ -57,7 +110,7 @@ router.get('/accounts/transactional/transactions', async function (req: Request,
 
   try{
 
-      const transactions = await up.transactions.listByAccount(process.env.TRANSACTIONAL_ID as string);
+      const transactions = await up.transactions.listByAccount(TRANSACTIONAL_ID);
       
       res.json(transactions)
       
@@ -87,7 +140,7 @@ router.get('/accounts/trasactional/monthly', async function (req:Request, res: R
 
     const startOfMonth = moment().startOf('month').toISOString()
 
-    const transactions = await up.transactions.listByAccount(process.env.TRANSACTIONAL_ID as string, {filterSince: startOfMonth });
+    const transactions = await up.transactions.listByAccount(TRANSACTIONAL_ID, {filterSince: startOfMonth });
     
     let total: number = 0;
 

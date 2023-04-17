@@ -1,10 +1,53 @@
-import React, {useState} from "react"
+import React, {useState, useContext} from "react"
+
+import { useNavigate } from "react-router-dom";
 
 import { Button, Form } from "react-bootstrap";
+
+import { verifyToken } from "Components/Axios/AxiosCommands";
+
+import { UpContext } from "Components/Context/UpContext";
 
 import './Home.css'
 
 function Home(){
+
+    const [token, setToken] = useState<string>('');
+    const [errors, setErrors] = useState<string | null>(null);
+    const {state, dispatch} = useContext(UpContext)
+    
+    const navigate = useNavigate();
+
+
+    function handleTokenInput(event: React.ChangeEvent<HTMLInputElement>){
+
+        setToken(event.currentTarget.value)
+
+    }
+
+    async function handleLogin(event: React.MouseEvent<HTMLButtonElement>){
+
+        if(token.length === 0){
+            setErrors('Token not provided')
+            return
+        }
+
+        const res = await verifyToken(token);
+
+        if(res){
+
+            dispatch({type:'login', payload: true})
+
+            navigate('/dashboard')
+
+        }
+
+        else{
+            setErrors('Incorrect token provided')
+        }
+
+
+    }
 
     return(
 
@@ -19,15 +62,21 @@ function Home(){
                     </div>
 
                 <div>
-                    <Form className="login-input" >
+                    <Form className="login-input" noValidate >
                         <Form.Group>
-                            <Form.Control type="password" placeholder="Enter Up Token Here"></Form.Control>
+                            <Form.Control 
+                                type="password" 
+                                placeholder="Enter Up Token Here"
+                                onChange={handleTokenInput}
+                                isInvalid = {!!errors}>
+                            </Form.Control>
+                            <Form.Control.Feedback type="invalid">{errors}</Form.Control.Feedback>
                         </Form.Group>
                     </Form>
                 </div>
 
                 <div>
-                    <Button>Login</Button>
+                    <Button onClick={handleLogin}>Login</Button>
                 </div>
 
 

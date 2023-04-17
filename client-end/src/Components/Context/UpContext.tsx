@@ -13,15 +13,17 @@ export type TransactionInsightType = {
 
 
 export interface CurrentState{
+    loggedIn: boolean
     savingsAccountBalance: AccountResource | null,
     trasactionalAccountBalance: AccountResource | null,
     transactionsList: ListTransactionsResponse | null,
     monthlySpendingTotal: string | null, 
-    transactionIndividual: TransactionResource | null
+    transactionIndividual: TransactionResource | null,
     transactionInsight: TransactionInsightType | null
 }
 
-const initalState: CurrentState = {    
+const initalState: CurrentState = { 
+    loggedIn: false,   
     savingsAccountBalance: null,
     trasactionalAccountBalance: null, 
     transactionsList: null,
@@ -34,9 +36,9 @@ const initalState: CurrentState = {
 
 export type CurrentAction = {
     type: 'savingAccountBalance' | 'transactionalAccountBalance'| 'getTransactions' 
-          | 'getMonthlySpending' | 'transactionIndividual' | 'transactionInsight'
+          | 'getMonthlySpending' | 'transactionIndividual' | 'transactionInsight' | 'login'
     payload: AccountResource | ListTransactionsResponse | TransactionResource | TransactionInsightType
-          | string | null
+          | string | null | boolean
             
 }
 

@@ -34,6 +34,9 @@ export function UpReducer(state: CurrentState, action: CurrentAction): CurrentSt
 
             return {...state, transactionInsight: transactionInsightPayload}
 
+        case 'login':
+            return {...state, loggedIn: action.payload as boolean}
+
         default:
             return state;
     }

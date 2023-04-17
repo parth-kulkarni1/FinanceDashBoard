@@ -18,14 +18,41 @@ const up_bank_api_1 = require("up-bank-api");
 require('dotenv').config();
 const moment_1 = __importDefault(require("moment"));
 const axios_1 = __importDefault(require("axios"));
-const up = new up_bank_api_1.UpApi(process.env.TOKEN);
+const up = new up_bank_api_1.UpApi();
+let TRANSACTIONAL_ID = "";
+let SAVERS_ID = "";
 const router = (0, express_1.Router)();
 exports.router = router;
-router.get('/accounts/transactional', function (req, res) {
+router.get('/login/:id', function (req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const accounts = yield up.accounts.retrieve(process.env.TRANSACTIONAL_ID);
-            res.json(accounts.data);
+            const token = req.params.id;
+            up.updateApiKey(token);
+            const authenticated = yield up.util.ping();
+            req.session.cookieGen = token; // set cookie to login
+            res.json(authenticated);
+        }
+        catch (e) {
+            if ((0, up_bank_api_1.isUpApiError)(e)) {
+                // Handle error returned from Up API
+                res.json(null);
+            }
+        }
+    });
+});
+router.get('/accounts/transactional', function (req, res) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            if (req.session.cookieGen) {
+                const accounts = yield up.accounts.list();
+                TRANSACTIONAL_ID = (_a = accounts.data.find(val => val.attributes.accountType == "TRANSACTIONAL")) === null || _a === void 0 ? void 0 : _a.id;
+                const tranactionalAccount = yield up.accounts.retrieve(TRANSACTIONAL_ID);
+                res.json(tranactionalAccount.data);
+            }
+            else {
+                return res.redirect('/');
+            }
         }
         catch (e) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {
@@ -38,10 +65,13 @@ router.get('/accounts/transactional', function (req, res) {
     });
 });
 router.get('/accounts/savings', function (req, res) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const savingAccount = yield up.accounts.retrieve(process.env.SAVERS_ID);
-            res.json(savingAccount.data);
+            const accounts = yield up.accounts.list();
+            SAVERS_ID = (_a = accounts.data.find(val => val.attributes.accountType == "SAVER")) === null || _a === void 0 ? void 0 : _a.id;
+            const savingsAccount = yield up.accounts.retrieve(SAVERS_ID);
+            res.json(savingsAccount.data);
         }
         catch (e) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {
@@ -56,7 +86,7 @@ router.get('/accounts/savings', function (req, res) {
 router.get('/accounts/transactional/transactions', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const transactions = yield up.transactions.listByAccount(process.env.TRANSACTIONAL_ID);
+            const transactions = yield up.transactions.listByAccount(TRANSACTIONAL_ID);
             res.json(transactions);
         }
         catch (e) {
@@ -73,7 +103,7 @@ router.get('/accounts/trasactional/monthly', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const startOfMonth = (0, moment_1.default)().startOf('month').toISOString();
-            const transactions = yield up.transactions.listByAccount(process.env.TRANSACTIONAL_ID, { filterSince: startOfMonth });
+            const transactions = yield up.transactions.listByAccount(TRANSACTIONAL_ID, { filterSince: startOfMonth });
             let total = 0;
             // Calculate the monthly cost 
             for (let i = 0; i < transactions.data.length; i++) {
