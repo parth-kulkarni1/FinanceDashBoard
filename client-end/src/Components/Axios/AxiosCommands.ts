@@ -6,6 +6,13 @@ import {merchantResponse, pastTransactionsHistory } from './TypesAxios';
 /* This contains all axios commands made to the backend */
 
 
+export async function findCookie(){
+    const {data} = await axios.get<any>('/cookie')
+
+    console.log("cookie data", data)
+
+    return data
+}
 
 export async function verifyToken(token: string){
 
@@ -14,6 +21,13 @@ export async function verifyToken(token: string){
     console.log(data, "login res")
 
     return data
+
+}
+
+export async function logout(){
+    const {data} = await axios.post<any>('/logout')
+
+    return data;
 
 }
 

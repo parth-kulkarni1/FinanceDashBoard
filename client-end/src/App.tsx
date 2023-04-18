@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css'; // import bootstrap stylesheet
-import {BrowserRouter, Route, Routes, Link} from 'react-router-dom'
+import {BrowserRouter, Route, Routes} from 'react-router-dom'
 
 /* Import Trevor Library CSS Styling File */ 
 import '@tremor/react/dist/esm/tremor.css';
@@ -15,6 +15,7 @@ import Dashboard from './Components/Dashboard/Dashboard';
 import TransactionIndividaul from 'Components/TransactionIndividual/TransactionIndividual';
 import TransactionInsight from 'Components/TransactionInsight/TransactionInsight';
 import { UpContextProvider } from 'Components/Context/UpContext';
+import { UserContextProvider } from 'Components/Context/UserContext';
 
 
 
@@ -22,6 +23,8 @@ function App() {
   return (
 
     <BrowserRouter>
+
+    <UserContextProvider>
     <UpContextProvider>
       <Header />
 
@@ -37,6 +40,9 @@ function App() {
     </UpContextProvider>
 
     <Footer />
+
+    </UserContextProvider>
+
  
     
     </BrowserRouter>

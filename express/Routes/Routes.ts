@@ -7,7 +7,7 @@ import moment from "moment";
 import axios from "axios";
 import { brandFetchReterive } from "../Types/Axios/typeAxios";
 
-import session from "express-session";
+import session, { Cookie } from "express-session";
 
 
 
@@ -40,10 +40,48 @@ router.get('/login/:id', async function(req:Request, res:Response, next:NextFunc
       // Handle error returned from Up API
       res.json(null)
     }
+
+    res.json(null) // Any other errors also to be treated as null
+
+    next(e) // Process the error on express
     
   }
 
   })
+
+
+  router.get('/cookie', async function (req: Request, res:Response, next: NextFunction) {
+
+    if(req.session.cookie){
+
+      res.json(true)
+
+    }
+
+    else{
+      res.json(false)
+    }
+
+  })
+
+
+  router.post('/logout', async function (req:Request, res:Response, next:NextFunction){
+
+    req.session.destroy(err  => {
+      if(err){
+        res.send({error: 'Logout error'})
+      }
+
+      res.clearCookie("connect.sid", {path:'/'})
+
+
+      res.json("success")
+
+
+    });
+
+  })
+
 
 router.get('/accounts/transactional', async function (req: Request, res: Response) {
 

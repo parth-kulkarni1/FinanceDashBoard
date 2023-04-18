@@ -18,7 +18,7 @@ app.use(cors(cors_options));
 app.use((0, express_session_1.default)({
     secret: 'keyboard cat',
     saveUninitialized: false,
-    cookie: { httpOnly: true, maxAge: 15000000, secure: 'auto' },
+    cookie: { httpOnly: true, maxAge: 900000, secure: 'auto' },
     resave: false,
 }));
 app.use(Routes_1.router);

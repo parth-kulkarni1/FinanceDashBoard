@@ -6,15 +6,15 @@ import { Button, Form } from "react-bootstrap";
 
 import { verifyToken } from "Components/Axios/AxiosCommands";
 
-import { UpContext } from "Components/Context/UpContext";
 
 import './Home.css'
+import { userContext } from "Components/Context/UserContext";
 
 function Home(){
 
     const [token, setToken] = useState<string>('');
     const [errors, setErrors] = useState<string | null>(null);
-    const {state, dispatch} = useContext(UpContext)
+    const {setUser} = useContext(userContext)
     
     const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ function Home(){
 
         if(res){
 
-            dispatch({type:'login', payload: true})
+            setUser(true)
 
             navigate('/dashboard')
 

@@ -37,7 +37,30 @@ router.get('/login/:id', function (req, res, next) {
                 // Handle error returned from Up API
                 res.json(null);
             }
+            res.json(null); // Any other errors also to be treated as null
+            next(e); // Process the error on express
         }
+    });
+});
+router.get('/cookie', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (req.session.cookie) {
+            res.json(true);
+        }
+        else {
+            res.json(false);
+        }
+    });
+});
+router.post('/logout', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        req.session.destroy(err => {
+            if (err) {
+                res.send({ error: 'Logout error' });
+            }
+            res.clearCookie("connect.sid", { path: '/' });
+            res.json("success");
+        });
     });
 });
 router.get('/accounts/transactional', function (req, res) {

@@ -1,19 +1,37 @@
-import {Navbar, Container, Nav, Button} from "react-bootstrap";
-import React, {useEffect, useState, useContext} from "react";
+import {Navbar, Container, Nav} from "react-bootstrap";
+import React, {useContext} from "react";
+import { useNavigate } from "react-router-dom";
 
-import { UpContext } from "Components/Context/UpContext";
+import { userContext } from "Components/Context/UserContext";
+import { logout } from "Components/Axios/AxiosCommands";
+
+
 
 
 function Header(){
 
-    const {state} = useContext(UpContext)
+    const {user, setUser} = useContext(userContext)
+
+    const navigate = useNavigate()
+
+    async function handleLogout(){
+
+        await logout();
+       
+        setUser(null)
+
+        navigate('/')
+        
+
+
+    }
 
     return(
         <Navbar bg = "dark" variant="dark" expand = "lg" >
             <Container >
                 <Navbar.Brand> ⚡️Welcome To Your Dashboard</Navbar.Brand>
                 <Nav>
-                    {!state.loggedIn ?
+                    {!user ?
 
                     <div className="d-flex">
                         <Nav.Link> About</Nav.Link>
@@ -21,7 +39,11 @@ function Header(){
                     </div>
                     :
 
-                    <Nav.Link>Logout</Nav.Link>
+                    <div className="d-flex">  
+                        <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                        <Nav.Link onClick={() => navigate('/dashboard')}>Return back To Dashboard</Nav.Link>
+                    </div>
+
 
                     }
 

@@ -19,7 +19,7 @@ app.use(
   session({
       secret: 'keyboard cat',
       saveUninitialized: false, // Sets a cookie in the browser by default .. true for now
-      cookie: { httpOnly: true, maxAge:15000000, secure: 'auto'},
+      cookie: { httpOnly: true, maxAge:900000, secure: 'auto'},
       resave: false, 
   }),
 );
