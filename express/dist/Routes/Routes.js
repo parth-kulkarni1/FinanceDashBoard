@@ -21,6 +21,7 @@ const axios_1 = __importDefault(require("axios"));
 const up = new up_bank_api_1.UpApi();
 let TRANSACTIONAL_ID = "";
 let SAVERS_ID = "";
+let TOKEN = "";
 const router = (0, express_1.Router)();
 exports.router = router;
 router.get('/login/:id', function (req, res, next) {
@@ -28,23 +29,24 @@ router.get('/login/:id', function (req, res, next) {
         try {
             const token = req.params.id;
             up.updateApiKey(token);
+            TOKEN = token;
             const authenticated = yield up.util.ping();
-            req.session.cookieGen = token; // set cookie to login
+            req.session.myData = true; // set cookie to login
             res.json(authenticated);
         }
         catch (e) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {
                 // Handle error returned from Up API
                 res.json(null);
+                return;
             }
             res.json(null); // Any other errors also to be treated as null
-            next(e); // Process the error on express
         }
     });
 });
 router.get('/cookie', function (req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (req.session.cookie) {
+        if (req.session.myData) {
             res.json(true);
         }
         else {
@@ -54,20 +56,15 @@ router.get('/cookie', function (req, res, next) {
 });
 router.post('/logout', function (req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        req.session.destroy(err => {
-            if (err) {
-                res.send({ error: 'Logout error' });
-            }
-            res.clearCookie("connect.sid", { path: '/' });
-            res.json("success");
-        });
+        delete req.session.myData;
+        res.redirect('/');
     });
 });
 router.get('/accounts/transactional', function (req, res) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            if (req.session.cookieGen) {
+            if (req.session.myData) {
                 const accounts = yield up.accounts.list();
                 TRANSACTIONAL_ID = (_a = accounts.data.find(val => val.attributes.accountType == "TRANSACTIONAL")) === null || _a === void 0 ? void 0 : _a.id;
                 const tranactionalAccount = yield up.accounts.retrieve(TRANSACTIONAL_ID);
@@ -150,7 +147,7 @@ router.get('/transactions/next', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const next = req.query.link;
-            const { data } = yield axios_1.default.get(next, { headers: { "Authorization": `Bearer ${process.env.TOKEN}` } });
+            const { data } = yield axios_1.default.get(next, { headers: { "Authorization": `Bearer ${TOKEN}` } });
             res.json(data);
         }
         catch (e) {
@@ -216,6 +213,34 @@ router.post('/transactional/category', function (req, res, next) {
         }
         catch (e) {
             console.log(e);
+        }
+    });
+});
+router.get('/transactional/monthly/graph', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const start_of_month = (0, moment_1.default)().startOf('month').toISOString();
+            const end_of_month = (0, moment_1.default)().endOf('month').toISOString();
+            const data = yield up.transactions.list({ filterSince: start_of_month, filterUntil: end_of_month, pageSize: 100 });
+            let income = 0;
+            let spending = 0;
+            for (let i = 0; i < data.data.length; i++) {
+                let value = parseFloat(data.data[i].attributes.amount.value);
+                if (value >= 0) { // This means that its some form of income
+                    income = income + value;
+                }
+                else {
+                    spending = spending + value;
+                }
+            }
+            res.json({ income: income, spending: spending });
+        }
+        catch (err) {
+            if ((0, up_bank_api_1.isUpApiError)(err)) {
+                res.json(err);
+                return;
+            }
+            res.json(err);
         }
     });
 });

@@ -110,7 +110,15 @@ export async function getPreviousTransactions(obj: any){
 
     return data;
 
+}
 
+
+export async function getMonthlySummary(){
+    const {data} = await axios.get<any>('/transactional/monthly/graph')
+
+    console.log(data, "monthly transact");
+
+    return data;
 
 }
 

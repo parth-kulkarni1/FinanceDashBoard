@@ -5,20 +5,21 @@ require('dotenv').config();
 
 import moment from "moment";
 import axios from "axios";
-import { brandFetchReterive } from "../Types/Axios/typeAxios";
 
-import session, { Cookie } from "express-session";
-
+declare module 'express-session' {
+  interface SessionData {
+    myData: boolean;
+  }
+}
 
 
 const up = new UpApi();
 
 let TRANSACTIONAL_ID = ""
 let SAVERS_ID = ""
+let TOKEN = ""
 
 const router = Router();
-
-declare module 'express-session' { interface Session { cookieGen: string}}
 
 
 router.get('/login/:id', async function(req:Request, res:Response, next:NextFunction) {
@@ -27,10 +28,11 @@ router.get('/login/:id', async function(req:Request, res:Response, next:NextFunc
       const token = req.params.id
 
       up.updateApiKey(token)
+      TOKEN = token
 
       const authenticated = await up.util.ping()
 
-      req.session.cookieGen = token // set cookie to login
+      req.session.myData = true // set cookie to login
       
       res.json(authenticated)
 
@@ -39,11 +41,10 @@ router.get('/login/:id', async function(req:Request, res:Response, next:NextFunc
     if (isUpApiError(e)) {
       // Handle error returned from Up API
       res.json(null)
+      return;
     }
 
     res.json(null) // Any other errors also to be treated as null
-
-    next(e) // Process the error on express
     
   }
 
@@ -52,7 +53,7 @@ router.get('/login/:id', async function(req:Request, res:Response, next:NextFunc
 
   router.get('/cookie', async function (req: Request, res:Response, next: NextFunction) {
 
-    if(req.session.cookie){
+    if(req.session.myData){
 
       res.json(true)
 
@@ -67,18 +68,11 @@ router.get('/login/:id', async function(req:Request, res:Response, next:NextFunc
 
   router.post('/logout', async function (req:Request, res:Response, next:NextFunction){
 
-    req.session.destroy(err  => {
-      if(err){
-        res.send({error: 'Logout error'})
-      }
+    delete req.session.myData;
 
-      res.clearCookie("connect.sid", {path:'/'})
+  
+    res.redirect('/')
 
-
-      res.json("success")
-
-
-    });
 
   })
 
@@ -87,7 +81,7 @@ router.get('/accounts/transactional', async function (req: Request, res: Respons
 
     try {
 
-      if(req.session.cookieGen){
+      if(req.session.myData){
 
 
         const accounts = await up.accounts.list()
@@ -220,7 +214,7 @@ router.get('/transactions/next', async function(req: Request, res:Response){
 
     const next = req.query.link as string;
     
-    const {data} = await axios.get<ListTransactionsResponse>(next, { headers: {"Authorization" : `Bearer ${process.env.TOKEN}`} })
+    const {data} = await axios.get<ListTransactionsResponse>(next, { headers: {"Authorization" : `Bearer ${TOKEN}`} })
 
     res.json(data)
     
@@ -325,6 +319,53 @@ router.post('/transactional/category', async function(req: Request, res:Response
 
   } catch(e){
     console.log(e)
+  }
+
+})
+
+
+router.get('/transactional/monthly/graph', async function (req: Request, res:Response, next:NextFunction){
+
+  try{
+
+    const start_of_month = moment().startOf('month').toISOString()
+    const end_of_month = moment().endOf('month').toISOString()
+
+    
+    const data = await up.transactions.list({filterSince: start_of_month, filterUntil: end_of_month, pageSize: 100})
+
+    let income = 0; 
+    let spending = 0;
+
+    for(let i = 0; i < data.data.length; i++){
+
+      let value = parseFloat(data.data[i].attributes.amount.value);
+
+      if(value >=0){ // This means that its some form of income
+
+        income = income + value;
+
+      }
+
+      else{
+        spending = spending + value;
+      }
+
+    }
+
+    res.json({income: income, spending: spending});
+
+  }
+
+  catch(err){
+    if(isUpApiError(err)){
+      res.json(err)
+      return
+    }
+
+    res.json(err)
+
+
   }
 
 })

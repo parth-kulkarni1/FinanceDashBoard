@@ -21,8 +21,6 @@ export const UserContextProvider = ({children}: userContextProviderProps) =>{
     useEffect(() =>{
 
         async function InitaliseCookie(){
-
-            console.log("triggering again and again..")
     
             const userData: boolean = await findCookie(); // find the cookie and see if it's present
     

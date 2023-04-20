@@ -17,9 +17,12 @@ import TransactionInsight from 'Components/TransactionInsight/TransactionInsight
 import { UpContextProvider } from 'Components/Context/UpContext';
 import { UserContextProvider } from 'Components/Context/UserContext';
 
+import PrivateRoutes from 'Components/PrivateRoutes/PrivateRoutes';
 
 
 function App() {
+
+
   return (
 
     <BrowserRouter>
@@ -31,10 +34,11 @@ function App() {
       <Routes>
 
         <Route path = "/" element = {<Home />}></Route>
-        <Route path = "/dashboard" element = {<Dashboard />}></Route>
-        <Route path = "/transaction/:transactionId" element = {<TransactionIndividaul />}></Route>
-        <Route path = "/transaction/insight/:transactionId" element = {<TransactionInsight />}></Route>
 
+        <Route path = "/dashboard" element = {<PrivateRoutes><Dashboard /></PrivateRoutes>} />
+        <Route path = "/transaction/:transactionId" element = {<PrivateRoutes><TransactionIndividaul/></PrivateRoutes>} />
+        <Route path = "/transaction/insight/:transactionId" element = {<PrivateRoutes><TransactionInsight /></PrivateRoutes>} />
+         
       </Routes>
 
     </UpContextProvider>
