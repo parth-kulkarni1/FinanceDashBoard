@@ -216,12 +216,12 @@ router.post('/transactional/category', function (req, res, next) {
         }
     });
 });
-router.get('/transactional/monthly/graph', function (req, res, next) {
+router.get('/transactional/monthly/graph/:id', function (req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const start_of_month = (0, moment_1.default)().startOf('month').toISOString();
-            const end_of_month = (0, moment_1.default)().endOf('month').toISOString();
-            const data = yield up.transactions.list({ filterSince: start_of_month, filterUntil: end_of_month, pageSize: 100 });
+            const requestedMonthStart = (0, moment_1.default)(req.params.id, 'MMMM YYYY').toISOString();
+            const requestedMonthEnd = (0, moment_1.default)(requestedMonthStart).endOf('month').toISOString();
+            const data = yield up.transactions.list({ filterSince: requestedMonthStart, filterUntil: requestedMonthEnd, pageSize: 100 });
             let income = 0;
             let spending = 0;
             for (let i = 0; i < data.data.length; i++) {
@@ -230,16 +230,114 @@ router.get('/transactional/monthly/graph', function (req, res, next) {
                     income = income + value;
                 }
                 else {
-                    spending = spending + value;
+                    spending = spending + Math.abs(value);
                 }
             }
-            res.json({ income: income, spending: spending });
+            res.json([{ status: "income", income: income }, { status: "spending", spending: spending }]);
         }
         catch (err) {
             if ((0, up_bank_api_1.isUpApiError)(err)) {
                 res.json(err);
                 return;
             }
+            res.json(err);
+        }
+    });
+});
+router.get('/transactions/monthly/categories/:id', function (req, res) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const requestedMonthStart = (0, moment_1.default)(req.params.id, 'MMMM YYYY').toISOString();
+            const requestedMonthEnd = (0, moment_1.default)(requestedMonthStart).endOf('month').toISOString();
+            const data = yield up.transactions.list({ filterSince: requestedMonthStart, filterUntil: requestedMonthEnd, pageSize: 100 });
+            const categories_for_month = [];
+            const response = [];
+            for (let i = 0; i < data.data.length; i++) {
+                const parentCategory = (_a = data.data[i].relationships.parentCategory.data) === null || _a === void 0 ? void 0 : _a.id;
+                if (parentCategory && categories_for_month.findIndex(val => val == parentCategory) === -1) {
+                    categories_for_month.push(parentCategory);
+                }
+            }
+            for (let k = 0; k < categories_for_month.length; k++) {
+                const reterivedData = data.data.filter(item => { var _a; return ((_a = item.relationships.parentCategory.data) === null || _a === void 0 ? void 0 : _a.id) === categories_for_month[k]; });
+                if (reterivedData.length > 1) {
+                    let spentOnCategory = 0;
+                    reterivedData.forEach(item => spentOnCategory = spentOnCategory + Math.abs(parseFloat(item.attributes.amount.value)));
+                    response.push({
+                        category: categories_for_month[k],
+                        totalSpent: spentOnCategory
+                    });
+                }
+                else if (reterivedData.length === 1) {
+                    const spentOnCategory = Math.abs(parseFloat(reterivedData[0].attributes.amount.value));
+                    response.push({
+                        category: categories_for_month[k],
+                        totalSpent: spentOnCategory
+                    });
+                }
+                else {
+                    response.push({
+                        category: categories_for_month[k],
+                        totalSpent: 0.0
+                    });
+                }
+            }
+            res.json(response);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    });
+});
+router.get('/transactional/monthly/top10/:id', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const requestedMonthStart = (0, moment_1.default)(req.params.id, 'MMMM YYYY').toISOString();
+            const requestedMonthEnd = (0, moment_1.default)(requestedMonthStart).endOf('month').toISOString();
+            let allTransactions = [];
+            let nextPageToken = '';
+            do {
+                const response = yield up.transactions.list({
+                    filterSince: requestedMonthStart,
+                    filterUntil: requestedMonthEnd,
+                    pageSize: 100,
+                });
+                allTransactions = allTransactions.concat(response);
+                nextPageToken = response.links.next;
+            } while (nextPageToken);
+            const data = [];
+            // We will now iterate through the array, and pick out only companies and allocate frequency of visits 
+            for (let i = 0; i < allTransactions[0].data.length; i++) {
+                // First case if its the first item 
+                const currentCompany = allTransactions[0].data[i];
+                console.log(currentCompany);
+                // Check ensure that only valid merchant purchases are being accessed 
+                if (currentCompany.relationships.category.data !== null) {
+                    if (i === 0) {
+                        data.push({ companyName: currentCompany.attributes.description,
+                            frequency: 1
+                        });
+                    }
+                    else {
+                        // Attempt to find the company, and if it does not exist add into data array 
+                        const itemIndex = data.findIndex(item => item.companyName === currentCompany.attributes.description);
+                        if (itemIndex === -1) { // Company does not exist
+                            data.push({
+                                companyName: currentCompany.attributes.description,
+                                frequency: 1
+                            });
+                        }
+                        else { // This company already exists, so we will have to just increment its frequency
+                            data[itemIndex].frequency = data[itemIndex].frequency + 1;
+                        }
+                    }
+                }
+            }
+            data.sort((a, b) => b.frequency - a.frequency);
+            res.json(data.slice(0, 5));
+        }
+        catch (err) {
             res.json(err);
         }
     });

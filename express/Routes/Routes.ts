@@ -1,4 +1,4 @@
-import express, { Express, NextFunction, Router } from "express";
+import express, { Express, NextFunction, Router, response } from "express";
 import { UpApi, isUpApiError, ListTransactionsResponse} from "up-bank-api";
 import { Request, Response } from "express";
 require('dotenv').config();
@@ -324,15 +324,16 @@ router.post('/transactional/category', async function(req: Request, res:Response
 })
 
 
-router.get('/transactional/monthly/graph', async function (req: Request, res:Response, next:NextFunction){
+router.get('/transactional/monthly/graph/:id', async function (req: Request, res:Response, next:NextFunction){
 
   try{
 
-    const start_of_month = moment().startOf('month').toISOString()
-    const end_of_month = moment().endOf('month').toISOString()
+    const requestedMonthStart = moment(req.params.id, 'MMMM YYYY').toISOString()
 
-    
-    const data = await up.transactions.list({filterSince: start_of_month, filterUntil: end_of_month, pageSize: 100})
+    const requestedMonthEnd = moment(requestedMonthStart).endOf('month').toISOString()
+
+    const data = await up.transactions.list({filterSince: requestedMonthStart, filterUntil: requestedMonthEnd, pageSize: 100})
+
 
     let income = 0; 
     let spending = 0;
@@ -348,12 +349,12 @@ router.get('/transactional/monthly/graph', async function (req: Request, res:Res
       }
 
       else{
-        spending = spending + value;
+        spending = spending + Math.abs(value);
       }
 
     }
 
-    res.json({income: income, spending: spending});
+    res.json([{status:"income", income: income}, {status:"spending", spending: spending}]);
 
   }
 
@@ -369,6 +370,171 @@ router.get('/transactional/monthly/graph', async function (req: Request, res:Res
   }
 
 })
+
+
+router.get('/transactions/monthly/categories/:id', async function(req:Request, res:Response){
+
+  try{
+
+    const requestedMonthStart = moment(req.params.id, 'MMMM YYYY').toISOString()
+    const requestedMonthEnd = moment(requestedMonthStart).endOf('month').toISOString()
+    const data = await up.transactions.list({filterSince: requestedMonthStart, filterUntil: requestedMonthEnd, pageSize: 100})
+
+    const categories_for_month:string[] = []
+
+    const response = []
+
+    for(let i = 0; i < data.data.length; i++){
+
+      const parentCategory = data.data[i].relationships.parentCategory.data?.id
+
+      if(parentCategory && categories_for_month.findIndex(val => val == parentCategory) === -1 ){
+          categories_for_month.push(parentCategory)
+      }
+    }
+
+    for (let k = 0; k < categories_for_month.length; k++){
+      const reterivedData = data.data.filter(item => item.relationships.parentCategory.data?.id === categories_for_month[k])
+
+      if(reterivedData.length > 1){
+
+        let spentOnCategory = 0;
+
+        reterivedData.forEach(item => spentOnCategory = spentOnCategory + Math.abs(parseFloat(item.attributes.amount.value)))
+
+        response.push({
+          category: categories_for_month[k],
+          totalSpent: spentOnCategory
+
+        })
+
+      }
+
+      else if(reterivedData.length === 1){
+
+        const spentOnCategory = Math.abs(parseFloat(reterivedData[0].attributes.amount.value));
+
+        response.push({
+          category: categories_for_month[k],
+          totalSpent: spentOnCategory
+        })
+      
+      }
+
+      else{
+
+        response.push({
+        category: categories_for_month[k],
+        totalSpent: 0.0
+        })
+      
+      }
+
+
+    
+    }
+
+
+    res.json(response)
+
+
+
+
+
+  } catch(err){
+    console.log(err)
+  }
+
+})
+
+
+router.get('/transactional/monthly/top10/:id', async function (req:Request, res:Response, next:NextFunction){
+
+  try{
+  
+    const requestedMonthStart = moment(req.params.id, 'MMMM YYYY').toISOString()
+    const requestedMonthEnd = moment(requestedMonthStart).endOf('month').toISOString()
+
+    let allTransactions: ListTransactionsResponse[] = [];
+    let nextPageToken = '';
+  
+    do {
+      const response = await up.transactions.list({
+        filterSince: requestedMonthStart,
+        filterUntil: requestedMonthEnd,
+        pageSize: 100,
+      });
+  
+      allTransactions = allTransactions.concat(response);
+      nextPageToken = response.links.next as string;
+    } while (nextPageToken);
+
+
+    type response = {
+      companyName: string, 
+      frequency: number
+    }
+
+    const data: response[] = []
+
+    // We will now iterate through the array, and pick out only companies and allocate frequency of visits 
+
+    for(let i = 0; i < allTransactions[0].data.length; i++){
+
+      // First case if its the first item 
+
+      const currentCompany = allTransactions[0].data[i]
+
+      console.log(currentCompany)
+
+      // Check ensure that only valid merchant purchases are being accessed 
+
+      if(currentCompany.relationships.category.data !== null){
+
+        if(i === 0){
+          data.push({companyName: currentCompany.attributes.description,
+                    frequency: 1
+                    })
+        }
+
+        else{
+          // Attempt to find the company, and if it does not exist add into data array 
+
+          const itemIndex = data.findIndex(item => item.companyName === currentCompany.attributes.description)
+
+          if(itemIndex === -1){ // Company does not exist
+
+            data.push({
+              companyName: currentCompany.attributes.description, 
+              frequency: 1
+            })
+
+          }
+
+          else{ // This company already exists, so we will have to just increment its frequency
+
+            data[itemIndex].frequency = data[itemIndex].frequency + 1;
+          }
+
+        }    
+      
+      }
+
+    }
+
+
+    data.sort((a,b) => b.frequency - a.frequency)
+
+    res.json(data.slice(0,5))
+  
+  }
+  catch(err){
+    res.json(err)
+  }
+
+})
+
+
 
 
 export {router};

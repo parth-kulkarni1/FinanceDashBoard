@@ -1,11 +1,14 @@
 import moment from "moment";
 import { TransactionResource } from "up-bank-api";
 
-export function convertDataForGraphs(transactionInsight: TransactionResource[]){
+type chartdataType = {
+    month: string, 
+    spend: number;
+}
 
-    const months = []
+export function getLastTwelveMonths(): string[]{
 
-    const chartdata = [];
+    const months: string[] = []
 
     const start = moment().startOf('month')
 
@@ -18,6 +21,36 @@ export function convertDataForGraphs(transactionInsight: TransactionResource[]){
     }
 
     months.reverse()
+
+    return months
+
+}
+
+export function getLastTwelveMonthsWithYears(): string[]{
+
+    const months_with_years: string[] = []
+
+    const start = moment().startOf('month')
+
+    const currentMonth = moment().format('MMMM YYYY')
+
+    months_with_years.push(currentMonth)
+
+    for (let i = 0; i < 11; i++) {
+        months_with_years.push(start.subtract(1, 'month').format('MMMM YYYY'))
+    }
+
+    months_with_years.reverse()
+
+    return months_with_years
+
+}
+
+export function convertDataForGraphs(transactionInsight: TransactionResource[]){
+
+    const months: string[] = getLastTwelveMonths();
+
+    const chartdata: chartdataType[] = [];
 
     for(let i = 0; i< months.length; i++ ){
 
@@ -72,21 +105,10 @@ export function convertDataForGraphs(transactionInsight: TransactionResource[]){
 
 export function generateTransactionSummaries(transactionInsight: TransactionResource[]){
 
-    const months_with_years = []
+    const months_with_years = getLastTwelveMonthsWithYears();
 
     const informationData = []
 
-    const start = moment().startOf('month')
-
-    const currentMonth = moment().format('MMMM YYYY')
-
-    months_with_years.push(currentMonth)
-
-    for (let i = 0; i < 11; i++) {
-        months_with_years.push(start.subtract(1, 'month').format('MMMM YYYY'))
-    }
-
-    months_with_years.reverse()
 
     for(let i = months_with_years.length; i >= 0; i--){
 

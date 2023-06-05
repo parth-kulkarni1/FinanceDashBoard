@@ -113,10 +113,28 @@ export async function getPreviousTransactions(obj: any){
 }
 
 
-export async function getMonthlySummary(){
-    const {data} = await axios.get<any>('/transactional/monthly/graph')
+export async function getMonthlySummary(requestedMonth: string){
+    const {data} = await axios.get<any>(`/transactional/monthly/graph/${requestedMonth}`)
 
     console.log(data, "monthly transact");
+
+    return data;
+
+}
+
+export async function getMonthlyCategorySummary(requestedMonth: string){
+    const {data} = await axios.get<any>(`/transactions/monthly/categories/${requestedMonth}`)
+
+    console.log(data, "category data")
+
+    return data;
+}
+
+
+export async function getMonthlyPopularCompanies(requestedMonth: string){
+    const {data} = await axios.get<any>(`/transactional/monthly/top10/${requestedMonth}`)
+
+    console.log(data, "top 10 places")
 
     return data;
 

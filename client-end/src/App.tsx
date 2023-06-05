@@ -14,6 +14,8 @@ import Header from './Components/Header/Header';
 import Dashboard from './Components/Dashboard/Dashboard';
 import TransactionIndividaul from 'Components/TransactionIndividual/TransactionIndividual';
 import TransactionInsight from 'Components/TransactionInsight/TransactionInsight';
+import MonthlyGraphs from 'Components/MonthlyGraphs/MonthlyGraphs';
+
 import { UpContextProvider } from 'Components/Context/UpContext';
 import { UserContextProvider } from 'Components/Context/UserContext';
 
@@ -38,6 +40,8 @@ function App() {
         <Route path = "/dashboard" element = {<PrivateRoutes><Dashboard /></PrivateRoutes>} />
         <Route path = "/transaction/:transactionId" element = {<PrivateRoutes><TransactionIndividaul/></PrivateRoutes>} />
         <Route path = "/transaction/insight/:transactionId" element = {<PrivateRoutes><TransactionInsight /></PrivateRoutes>} />
+        <Route path = "/transaction/insight/:transactionId" element = {<PrivateRoutes><MonthlyGraphs/></PrivateRoutes>} />
+
          
       </Routes>
 

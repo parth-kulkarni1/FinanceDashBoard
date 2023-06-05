@@ -2,15 +2,12 @@ import React, {useEffect, useContext} from 'react';
 
 /* Importing of components */
 import Accounts from 'Components/AccountsInformation/Accounts';
-import { getMonthlyTransactionalTotal, getSavingsAccount, getTransactionalAccount, getTransactions, getMonthlySummary } from "Components/Axios/AxiosCommands";
+import { getMonthlyTransactionalTotal, getSavingsAccount, getTransactionalAccount, getTransactions } from "Components/Axios/AxiosCommands";
 import TransactionsTable from 'Components/TransactionalTable/TransactionalTable';
 import { UpContext } from 'Components/Context/UpContext';
-import { Button, Card } from 'react-bootstrap';
+import MonthlyGraphs from 'Components/MonthlyGraphs/MonthlyGraphs';
 
 /* Import of 3rd party libraries */ 
-
-
-
 
 function Dashboard(){
 
@@ -36,27 +33,16 @@ function Dashboard(){
 
   }, [])
 
-  async function handleMonthlyGraph(){
-
-    const data = await getMonthlySummary();
-
-    console.log(data)
-
-  }
-
-
     return(
         <div>
 
-          <Card>
-            <Button>March</Button>
-            <Button>March</Button>
-
-          </Card>
-
-
           <Accounts />
-          <TransactionsTable />
+
+          <div className='d-flex flex-gap-20  p-2'>
+            <TransactionsTable />
+            <MonthlyGraphs />
+
+          </div>
             
         </div>
     )
