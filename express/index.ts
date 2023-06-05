@@ -7,7 +7,7 @@ const app = express();
 const port = process.env.PORT || 4000;
 const cors = require('cors')
 const cors_options = {
-  origin: "http://localhost:3000",
+  origin: "https://finance-dash-board-tau.vercel.app/",
   credentials: true
 }
 
