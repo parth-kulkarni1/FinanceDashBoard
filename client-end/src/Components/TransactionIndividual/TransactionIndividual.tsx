@@ -54,6 +54,8 @@ function TransactionIndividaul(){ // This component will list each each transact
 
     }, [navigate, state.transactionIndividual])
 
+    
+
     function handleInsightView(){
 
         dispatch({type: 'transactionInsight', payload: {merchantInfo: info.brandInfo, transaction: previousTransactions }})

@@ -29,4 +29,5 @@ app.set('trust proxy', 1)
 
 app.listen(port, () => console.log("sucessfully created on port 4000"));
 
+module.exports = app
 

@@ -24,3 +24,4 @@ app.use((0, express_session_1.default)({
 app.use(Routes_1.router);
 app.set('trust proxy', 1);
 app.listen(port, () => console.log("sucessfully created on port 4000"));
+module.exports = app;
