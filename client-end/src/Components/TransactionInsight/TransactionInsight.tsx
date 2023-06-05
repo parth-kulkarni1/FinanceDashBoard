@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react"
+import React, {useContext} from "react"
 
 import { UpContext } from "Components/Context/UpContext";
 
@@ -18,7 +18,7 @@ type summaryDataType = {
 
 function TransactionInsight(){
 
-    const {state, dispatch} = useContext(UpContext)
+    const {state} = useContext(UpContext)
     
     const chartdata = convertDataForGraphs(state.transactionInsight.transaction.pastTransactionsList)
 
