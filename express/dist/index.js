@@ -10,7 +10,7 @@ const app = (0, express_1.default)();
 const port = process.env.PORT || 4000;
 const cors = require('cors');
 const cors_options = {
-    origin: "http://localhost:3000",
+    origin: "https://finance-dash-board-tau.vercel.app/",
     credentials: true
 };
 app.use(express_1.default.json());
@@ -18,7 +18,7 @@ app.use(cors(cors_options));
 app.use((0, express_session_1.default)({
     secret: 'keyboard cat',
     saveUninitialized: false,
-    cookie: { httpOnly: true, maxAge: 900000, secure: 'auto', sameSite: 'strict' },
+    cookie: { httpOnly: true, maxAge: 900000, secure: 'auto', sameSite: 'none' },
     resave: false,
 }));
 app.use(Routes_1.router);

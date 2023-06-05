@@ -13,13 +13,13 @@ const cors_options = {
 
 
 app.use(express.json());
-app.use(cors(cors_options))
+app.use(cors(cors_options)) 
 
 app.use(
   session({
       secret: 'keyboard cat',
       saveUninitialized: false, // Sets a cookie in the browser by default .. true for now
-      cookie: { httpOnly: false, maxAge:900000, secure: 'auto', sameSite: 'strict'},
+      cookie: { httpOnly: true, maxAge:900000, secure: 'auto', sameSite: 'none'},
       resave: false, 
   }),
 );
