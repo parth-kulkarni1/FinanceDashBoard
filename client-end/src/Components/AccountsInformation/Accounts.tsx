@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 
 import { UpContext } from "Components/Context/UpContext";
 
-import { Card, Metric, Text, Flex } from "@tremor/react";
+import { Card, Metric, Text} from "@tremor/react";
 
 
 function Accounts(){

@@ -1,10 +1,9 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, {useState, useEffect} from "react";
 
 import { Card, BarChart, Title, DonutChart, List, ListItem } from "@tremor/react";
 import { Button } from "react-bootstrap";
 import { getMonthlySummary, getMonthlyCategorySummary, getMonthlyPopularCompanies } from "Components/Axios/AxiosCommands";
 import { getLastTwelveMonthsWithYears } from "Components/TransactionInsight/functions";
-import { Dropdown, DropdownItem } from "@tremor/react";
 
 
 

@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {AccountResource, ListTransactionsResponse, Pong, TransactionResource, isUpApiError} from 'up-bank-api'
+import {AccountResource, ListTransactionsResponse} from 'up-bank-api'
 import {merchantResponse, pastTransactionsHistory } from './TypesAxios';
 
 
