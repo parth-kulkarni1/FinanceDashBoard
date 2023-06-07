@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {AccountResource, ListTransactionsResponse} from 'up-bank-api'
-import {merchantResponse, pastTransactionsHistory } from './TypesAxios';
+import {MonthlyCategoryDetailed, merchantResponse, pastTransactionsHistory } from './TypesAxios';
 
 
 /* This contains all axios commands made to the backend */
@@ -137,6 +137,14 @@ export async function getMonthlyPopularCompanies(requestedMonth: string){
     console.log(data, "top 10 places")
 
     return data;
+
+}
+
+export async function getMonthlyCategoryDetailed(requestedMonth: string){
+    const {data} = await axios.get<MonthlyCategoryDetailed[]>(`/transactional/monthly/category/detailed/${requestedMonth}`)
+
+    return data
+
 
 }
 

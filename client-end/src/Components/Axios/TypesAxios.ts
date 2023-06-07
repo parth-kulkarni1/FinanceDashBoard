@@ -51,3 +51,14 @@ export type pastTransactionsHistory = {
     transactionSummary :  transactionSummary
     pastTransactionsList: TransactionResource[]
 }
+
+
+export type childCategoryType = {
+    categoryName: string | undefined,
+    transaction: TransactionResource[]
+  }
+
+export type MonthlyCategoryDetailed = {
+    parentCategory: string | undefined, 
+    childCategory: childCategoryType[]
+  }

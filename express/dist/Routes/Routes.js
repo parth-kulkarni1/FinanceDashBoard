@@ -127,7 +127,7 @@ router.get('/accounts/trasactional/monthly', function (req, res) {
             let total = 0;
             // Calculate the monthly cost 
             for (let i = 0; i < transactions.data.length; i++) {
-                if (transactions.data[i].relationships.transferAccount.data === null) {
+                if (transactions.data[i].attributes.amount.valueInBaseUnits < 0 && transactions.data[i].attributes.isCategorizable === true) {
                     total = total + Math.abs(parseFloat(transactions.data[i].attributes.amount.value));
                 }
             }
@@ -226,10 +226,12 @@ router.get('/transactional/monthly/graph/:id', function (req, res, next) {
             let spending = 0;
             for (let i = 0; i < data.data.length; i++) {
                 let value = parseFloat(data.data[i].attributes.amount.value);
-                if (value >= 0) { // This means that its some form of income
+                const validExpense = data.data[i].attributes.isCategorizable && data.data[i].attributes.amount.valueInBaseUnits < 0;
+                const validIncome = data.data[i].attributes.isCategorizable && data.data[i].attributes.amount.valueInBaseUnits > 0;
+                if (validIncome) { // This means that its some form of income
                     income = income + value;
                 }
-                else {
+                else if (validExpense) {
                     spending = spending + Math.abs(value);
                 }
             }
@@ -336,6 +338,78 @@ router.get('/transactional/monthly/top10/:id', function (req, res, next) {
             }
             data.sort((a, b) => b.frequency - a.frequency);
             res.json(data.slice(0, 5));
+        }
+        catch (err) {
+            res.json(err);
+        }
+    });
+});
+router.get('/transactional/monthly/category/detailed/:id', function (req, res, next) {
+    var _a, _b, _c, _d, _e;
+    return __awaiter(this, void 0, void 0, function* () {
+        // Establish date boundaries
+        const requestedMonthStart = (0, moment_1.default)(req.params.id, 'MMMM YYYY').toISOString(); // Reterive the respective month
+        const requestedMonthEnd = (0, moment_1.default)(requestedMonthStart).endOf('month').toISOString();
+        try {
+            // Lets retrieve all possible data now, since it's paginated
+            let allTransactions = [];
+            let nextPageToken = '';
+            do {
+                const response = yield up.transactions.list({
+                    filterSince: requestedMonthStart,
+                    filterUntil: requestedMonthEnd,
+                    pageSize: 100,
+                });
+                allTransactions = allTransactions.concat(response);
+                nextPageToken = response.links.next;
+            } while (nextPageToken);
+            const data = allTransactions[0];
+            // Contains an array of objects with object type defined above
+            const DataToReturn = [];
+            /* Cases to consider
+        
+              - The transaction must be an expense
+              - Need to set the parent category as the key in dictionary and append all child category to parent category
+              - Conditional checks to check whether the parent category exists too
+            */
+            for (let i = 0; i < data.data.length; i++) {
+                let currentData = data.data[i];
+                // Lets check whether its a valid expense
+                if (currentData.attributes.isCategorizable && currentData.attributes.amount.valueInBaseUnits < 0) {
+                    // First case nothing exists so lets add this into our array
+                    if (i === 0) {
+                        DataToReturn.push({
+                            parentCategory: (_a = currentData.relationships.parentCategory.data) === null || _a === void 0 ? void 0 : _a.id,
+                            childCategory: [{ categoryName: (_b = currentData.relationships.category.data) === null || _b === void 0 ? void 0 : _b.id, transaction: [currentData] }]
+                        });
+                    }
+                    else {
+                        // This means we are not the first iteration 
+                        // Lets find if the parent category of the currentData exists in our array 
+                        const parentIndex = DataToReturn.findIndex(itemIndex => { var _a; return itemIndex.parentCategory === ((_a = currentData.relationships.parentCategory.data) === null || _a === void 0 ? void 0 : _a.id); });
+                        if (parentIndex !== -1) {
+                            // Means the parent category does exists, so lets append it
+                            const childCategory = DataToReturn[parentIndex].childCategory.find(item => { var _a; return item.categoryName === ((_a = currentData.relationships.category.data) === null || _a === void 0 ? void 0 : _a.id); });
+                            if (childCategory) {
+                                // This means that both parent category and child category exists
+                                childCategory.transaction.push(currentData);
+                            }
+                            else {
+                                // This means that the parent exists but the child category does not exist 
+                                DataToReturn[parentIndex].childCategory.push({ categoryName: (_c = currentData.relationships.category.data) === null || _c === void 0 ? void 0 : _c.id, transaction: [currentData] });
+                            }
+                        }
+                        else {
+                            // This means that parent does not exist at all, and child cannot exist without parent so this makes sense
+                            DataToReturn.push({
+                                parentCategory: (_d = currentData.relationships.parentCategory.data) === null || _d === void 0 ? void 0 : _d.id,
+                                childCategory: [{ categoryName: (_e = currentData.relationships.category.data) === null || _e === void 0 ? void 0 : _e.id, transaction: [currentData] }]
+                            });
+                        }
+                    }
+                }
+            }
+            res.json(DataToReturn);
         }
         catch (err) {
             res.json(err);

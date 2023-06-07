@@ -20,6 +20,7 @@ import { UpContextProvider } from 'Components/Context/UpContext';
 import { UserContextProvider } from 'Components/Context/UserContext';
 
 import PrivateRoutes from 'Components/PrivateRoutes/PrivateRoutes';
+import MonthlyCategoryDetailed from 'Components/MonthlyCategory/MonthlyCategory';
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
         <Route path = "/transaction/:transactionId" element = {<PrivateRoutes><TransactionIndividaul/></PrivateRoutes>} />
         <Route path = "/transaction/insight/:transactionId" element = {<PrivateRoutes><TransactionInsight /></PrivateRoutes>} />
         <Route path = "/transaction/insight/:transactionId" element = {<PrivateRoutes><MonthlyGraphs/></PrivateRoutes>} />
+        <Route path = "/category/:monthId" element = {<PrivateRoutes><MonthlyCategoryDetailed/></PrivateRoutes>} />
 
          
       </Routes>

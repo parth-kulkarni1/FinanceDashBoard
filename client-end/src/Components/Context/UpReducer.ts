@@ -1,5 +1,6 @@
 import { AccountResource, ListTransactionsResponse, TransactionResource } from "up-bank-api";
 import { CurrentState, CurrentAction, TransactionInsightType } from "./UpContext";
+import { MonthlyCategoryDetailed } from "Components/Axios/TypesAxios";
 
 export function UpReducer(state: CurrentState, action: CurrentAction): CurrentState{
     switch(action.type){
@@ -33,6 +34,13 @@ export function UpReducer(state: CurrentState, action: CurrentAction): CurrentSt
             const transactionInsightPayload = action.payload as TransactionInsightType
 
             return {...state, transactionInsight: transactionInsightPayload}
+
+        case 'categoryMonthlyDetailed':
+            const categoryDetailedPayload = action.payload as MonthlyCategoryDetailed[]
+
+            return {...state, monthCategoryDetailedInfo: categoryDetailedPayload}
+
+
 
         default:
             return state;

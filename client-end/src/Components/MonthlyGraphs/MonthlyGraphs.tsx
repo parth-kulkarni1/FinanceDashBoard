@@ -1,9 +1,11 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect,useContext} from "react";
+import { getMonthlySummary, getMonthlyCategorySummary, getMonthlyPopularCompanies, getMonthlyCategoryDetailed } from "Components/Axios/AxiosCommands";
+import { getLastTwelveMonthsWithYears } from "Components/TransactionInsight/functions";
+import { UpContext } from "Components/Context/UpContext";
+import { useNavigate } from "react-router-dom";
 
 import { Card, BarChart, Title, DonutChart, List, ListItem } from "@tremor/react";
 import { Button } from "react-bootstrap";
-import { getMonthlySummary, getMonthlyCategorySummary, getMonthlyPopularCompanies } from "Components/Axios/AxiosCommands";
-import { getLastTwelveMonthsWithYears } from "Components/TransactionInsight/functions";
 
 
 
@@ -21,6 +23,9 @@ type MonthlyData = {
 
 
 function MonthlyGraphs(){
+
+    const {dispatch}= useContext(UpContext)
+    const navigate = useNavigate();
 
     const lastTwelveMonths = getLastTwelveMonthsWithYears();
 
@@ -105,6 +110,21 @@ function MonthlyGraphs(){
         setSelecteMonthPopularItems(month)
     }
 
+    async function handleExpandCategory(event: React.FormEvent<HTMLButtonElement>){
+
+        const data = await getMonthlyCategoryDetailed(selectedMonthCategory)
+
+        console.log("line 117 data", data)
+    
+        // Once the data is there then we add it to the global context and reterive in other component 
+        dispatch({type:'categoryMonthlyDetailed', payload: data})
+
+        navigate(`/category/${selectedMonthCategory}`)
+
+        // Navigate to a certain component navigate(/....)
+
+    }
+
 
     return(
 
@@ -147,7 +167,7 @@ function MonthlyGraphs(){
 
             <div className="d-flex justify-content-between">
                 <Title>Categorical Spending for {selectedMonthCategory}</Title>
-                <Button>View more about {selectedMonthCategory}</Button>
+                <Button onClick={handleExpandCategory}>View more about {selectedMonthCategory}</Button>
 
             </div>
 

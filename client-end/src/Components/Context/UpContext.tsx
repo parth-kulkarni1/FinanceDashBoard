@@ -4,12 +4,14 @@
 import React, {createContext, ReactNode, useReducer} from "react";
 import { AccountResource, ListTransactionsResponse, TransactionResource } from "up-bank-api";
 import { UpReducer } from "./UpReducer";
-import { brandFetchSearch, pastTransactionsHistory } from "Components/Axios/TypesAxios";
+import { brandFetchSearch, pastTransactionsHistory, MonthlyCategoryDetailed } from "Components/Axios/TypesAxios";
 
 export type TransactionInsightType = {
     merchantInfo: brandFetchSearch
     transaction: pastTransactionsHistory
 }
+
+
 
 
 export interface CurrentState{
@@ -18,7 +20,8 @@ export interface CurrentState{
     transactionsList: ListTransactionsResponse | null,
     monthlySpendingTotal: string | null, 
     transactionIndividual: TransactionResource | null,
-    transactionInsight: TransactionInsightType | null
+    transactionInsight: TransactionInsightType | null,
+    monthCategoryDetailedInfo: MonthlyCategoryDetailed[] | null
 }
 
 const initalState: CurrentState = { 
@@ -27,7 +30,8 @@ const initalState: CurrentState = {
     transactionsList: null,
     monthlySpendingTotal: null,
     transactionIndividual: null, 
-    transactionInsight: null
+    transactionInsight: null,
+    monthCategoryDetailedInfo: null
 }
 
 
@@ -35,8 +39,9 @@ const initalState: CurrentState = {
 export type CurrentAction = {
     type: 'savingAccountBalance' | 'transactionalAccountBalance'| 'getTransactions' 
           | 'getMonthlySpending' | 'transactionIndividual' | 'transactionInsight'
+          | 'categoryMonthlyDetailed'
     payload: AccountResource | ListTransactionsResponse | TransactionResource | TransactionInsightType
-          | string | null | boolean
+          | MonthlyCategoryDetailed[] | string | null | boolean
             
 }
 
