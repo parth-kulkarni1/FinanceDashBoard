@@ -597,7 +597,7 @@ router.get('/transactional/monthly/category/detailed/:id', async function (req:R
 
       // Lets check whether its a valid expense
 
-      if(currentData.attributes.isCategorizable && currentData.attributes.amount.valueInBaseUnits < 0){
+      if(currentData.attributes.isCategorizable && currentData.attributes.amount.valueInBaseUnits < 0 && currentData.relationships.parentCategory.data?.id !== undefined){
           
         // First case nothing exists so lets add this into our array
 
@@ -662,6 +662,24 @@ router.get('/transactional/monthly/category/detailed/:id', async function (req:R
   catch(err){
     res.json(err)
   }
+
+})
+
+router.post('/transactions/add/tag', async function (req:Request, res:Response, next:NextFunction){
+
+
+  try{
+  
+    const tagObj = req.body
+    
+    await up.tags.addTagsToTransaction(tagObj.transactionId, [tagObj.tags])
+
+    res.sendStatus(204) // Sending 204 status code for success
+  
+  } catch(err){
+    res.status(500).json({ error: 'An error occurred' });
+  }
+
 
 })
 

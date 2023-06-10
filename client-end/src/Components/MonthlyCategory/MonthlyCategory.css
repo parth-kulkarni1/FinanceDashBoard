@@ -1,0 +1,15 @@
+.category-labels-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 75vh; /* Set container height to full viewport height */
+    padding: 10px;
+  
+}
+  
+
+.flex-gap-5{
+    gap:5px
+}

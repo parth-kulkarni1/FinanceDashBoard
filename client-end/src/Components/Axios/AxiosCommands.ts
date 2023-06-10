@@ -1,6 +1,6 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import {AccountResource, ListTransactionsResponse} from 'up-bank-api'
-import {MonthlyCategoryDetailed, merchantResponse, pastTransactionsHistory } from './TypesAxios';
+import {MonthlyCategoryDetailed, merchantResponse, pastTransactionsHistory, postObj } from './TypesAxios';
 
 
 /* This contains all axios commands made to the backend */
@@ -145,6 +145,14 @@ export async function getMonthlyCategoryDetailed(requestedMonth: string){
 
     return data
 
+}
+
+export async function addTagsToTransaction(postObj: postObj){
+    const response = await axios.post<AxiosResponse>('/transactions/add/tag', postObj)
+
+    console.log(response, "added tags yee")
+
+    return response
 
 }
 

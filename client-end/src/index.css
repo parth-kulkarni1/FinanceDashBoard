@@ -15,3 +15,7 @@ code {
 .flex-gap-20{
   gap: 20px;
 }
+
+.text-red{
+  color: red;
+}

@@ -11,6 +11,11 @@ export type TransactionInsightType = {
     transaction: pastTransactionsHistory
 }
 
+export type addTags = {
+    setTags: boolean, 
+    tagPayload: TransactionResource | null
+}
+
 
 
 
@@ -22,6 +27,7 @@ export interface CurrentState{
     transactionIndividual: TransactionResource | null,
     transactionInsight: TransactionInsightType | null,
     monthCategoryDetailedInfo: MonthlyCategoryDetailed[] | null
+    addTag: addTags | null
 }
 
 const initalState: CurrentState = { 
@@ -31,7 +37,8 @@ const initalState: CurrentState = {
     monthlySpendingTotal: null,
     transactionIndividual: null, 
     transactionInsight: null,
-    monthCategoryDetailedInfo: null
+    monthCategoryDetailedInfo: null,
+    addTag: null
 }
 
 
@@ -39,9 +46,9 @@ const initalState: CurrentState = {
 export type CurrentAction = {
     type: 'savingAccountBalance' | 'transactionalAccountBalance'| 'getTransactions' 
           | 'getMonthlySpending' | 'transactionIndividual' | 'transactionInsight'
-          | 'categoryMonthlyDetailed'
+          | 'categoryMonthlyDetailed' | 'addTag' | 'updateTags'
     payload: AccountResource | ListTransactionsResponse | TransactionResource | TransactionInsightType
-          | MonthlyCategoryDetailed[] | string | null | boolean
+          | MonthlyCategoryDetailed[] | addTags | string | null | boolean
             
 }
 

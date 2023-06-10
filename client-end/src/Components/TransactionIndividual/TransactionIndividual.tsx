@@ -10,6 +10,8 @@ import moment from "moment";
 import {SlSocialInstagram,SlSocialTwitter, SlSocialLinkedin, SlSocialFacebook,
         SlSocialYoutube} from "react-icons/sl"
 import { Button } from "react-bootstrap";
+import AddTag from "./AddTag";
+
 
 
 function TransactionIndividaul(){ // This component will list each each transaction information away from the home page..
@@ -64,6 +66,11 @@ function TransactionIndividaul(){ // This component will list each each transact
 
     }
 
+    function handleAddTag(event: React.FormEvent<HTMLButtonElement>){
+
+        dispatch({type: 'addTag', payload: {setTags:true, tagPayload: state.transactionIndividual }})
+    }
+
 
     return(
 
@@ -79,7 +86,7 @@ function TransactionIndividaul(){ // This component will list each each transact
                     <div className="d-flex flex-gap-20 p-1">
                     <h3>Transactional Information</h3>
 
-                    <Button variant = "primary"  disabled = {state.transactionIndividual.relationships.tags.data.length === 6}>
+                    <Button variant = "primary" onClick={handleAddTag}  disabled = {state.transactionIndividual.relationships.tags.data.length === 6}>
                         Add Tag to Transaction
                     </Button>
 
@@ -273,6 +280,12 @@ function TransactionIndividaul(){ // This component will list each each transact
     </Card>
 
     }
+
+        {state.addTag && 
+        
+            <AddTag />
+        
+        }
 
 
 

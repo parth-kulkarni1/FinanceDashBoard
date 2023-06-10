@@ -345,7 +345,7 @@ router.get('/transactional/monthly/top10/:id', function (req, res, next) {
     });
 });
 router.get('/transactional/monthly/category/detailed/:id', function (req, res, next) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f;
     return __awaiter(this, void 0, void 0, function* () {
         // Establish date boundaries
         const requestedMonthStart = (0, moment_1.default)(req.params.id, 'MMMM YYYY').toISOString(); // Reterive the respective month
@@ -375,12 +375,12 @@ router.get('/transactional/monthly/category/detailed/:id', function (req, res, n
             for (let i = 0; i < data.data.length; i++) {
                 let currentData = data.data[i];
                 // Lets check whether its a valid expense
-                if (currentData.attributes.isCategorizable && currentData.attributes.amount.valueInBaseUnits < 0) {
+                if (currentData.attributes.isCategorizable && currentData.attributes.amount.valueInBaseUnits < 0 && ((_a = currentData.relationships.parentCategory.data) === null || _a === void 0 ? void 0 : _a.id) !== undefined) {
                     // First case nothing exists so lets add this into our array
                     if (i === 0) {
                         DataToReturn.push({
-                            parentCategory: (_a = currentData.relationships.parentCategory.data) === null || _a === void 0 ? void 0 : _a.id,
-                            childCategory: [{ categoryName: (_b = currentData.relationships.category.data) === null || _b === void 0 ? void 0 : _b.id, transaction: [currentData] }]
+                            parentCategory: (_b = currentData.relationships.parentCategory.data) === null || _b === void 0 ? void 0 : _b.id,
+                            childCategory: [{ categoryName: (_c = currentData.relationships.category.data) === null || _c === void 0 ? void 0 : _c.id, transaction: [currentData] }]
                         });
                     }
                     else {
@@ -396,14 +396,14 @@ router.get('/transactional/monthly/category/detailed/:id', function (req, res, n
                             }
                             else {
                                 // This means that the parent exists but the child category does not exist 
-                                DataToReturn[parentIndex].childCategory.push({ categoryName: (_c = currentData.relationships.category.data) === null || _c === void 0 ? void 0 : _c.id, transaction: [currentData] });
+                                DataToReturn[parentIndex].childCategory.push({ categoryName: (_d = currentData.relationships.category.data) === null || _d === void 0 ? void 0 : _d.id, transaction: [currentData] });
                             }
                         }
                         else {
                             // This means that parent does not exist at all, and child cannot exist without parent so this makes sense
                             DataToReturn.push({
-                                parentCategory: (_d = currentData.relationships.parentCategory.data) === null || _d === void 0 ? void 0 : _d.id,
-                                childCategory: [{ categoryName: (_e = currentData.relationships.category.data) === null || _e === void 0 ? void 0 : _e.id, transaction: [currentData] }]
+                                parentCategory: (_e = currentData.relationships.parentCategory.data) === null || _e === void 0 ? void 0 : _e.id,
+                                childCategory: [{ categoryName: (_f = currentData.relationships.category.data) === null || _f === void 0 ? void 0 : _f.id, transaction: [currentData] }]
                             });
                         }
                     }
@@ -413,6 +413,18 @@ router.get('/transactional/monthly/category/detailed/:id', function (req, res, n
         }
         catch (err) {
             res.json(err);
+        }
+    });
+});
+router.post('/transactions/add/tag', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const tagObj = req.body;
+            yield up.tags.addTagsToTransaction(tagObj.transactionId, [tagObj.tags]);
+            res.sendStatus(204); // Sending 204 status code for success
+        }
+        catch (err) {
+            res.status(500).json({ error: 'An error occurred' });
         }
     });
 });

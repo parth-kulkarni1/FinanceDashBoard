@@ -61,4 +61,12 @@ export type childCategoryType = {
 export type MonthlyCategoryDetailed = {
     parentCategory: string | undefined, 
     childCategory: childCategoryType[]
-  }
+}
+
+
+
+export type postObj = {
+    transactionId: string, 
+    tags: any
+
+}
