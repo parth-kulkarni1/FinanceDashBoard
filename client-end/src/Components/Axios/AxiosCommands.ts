@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios'
-import {AccountResource, ListTransactionsResponse} from 'up-bank-api'
+import {AccountResource, CategoryResource, ListTransactionsResponse} from 'up-bank-api'
 import {MonthlyCategoryDetailed, merchantResponse, pastTransactionsHistory, postObj } from './TypesAxios';
 
 
@@ -153,6 +153,26 @@ export async function addTagsToTransaction(postObj: postObj){
     console.log(response, "added tags yee")
 
     return response
+
+}
+
+export async function removeTagsToTransaction(postObj: postObj){
+    const response = await axios.delete<AxiosResponse>('/transactions/delete/tag', {
+        data: postObj,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+
+    return response
+
+}
+
+export async function getCategories(){
+    const data = await axios.get<any>('/categories')
+
+    return data
+
 
 }
 

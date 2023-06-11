@@ -428,3 +428,48 @@ router.post('/transactions/add/tag', function (req, res, next) {
         }
     });
 });
+router.delete('/transactions/delete/tag', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const tabObj = req.body;
+            yield up.tags.removeTagsFromTransaction(tabObj.transactionId, [tabObj.tags]);
+            res.sendStatus(204); // Sending 204 status code for success
+        }
+        catch (err) {
+            res.sendStatus(500).json({ error: 'An error occurred' });
+        }
+    });
+});
+router.get('/categories', function (req, res, next) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            let responseToReturn = [];
+            const data = yield up.categories.list();
+            for (let i = 0; i < data.data.length; i++) {
+                const currentCategoryParent = (_a = data.data[i].relationships.parent.data) === null || _a === void 0 ? void 0 : _a.id;
+                const currentCategoryName = data.data[i].attributes.name;
+                if (i === 0) {
+                    // First item scenario
+                    responseToReturn.push({ parentCategory: currentCategoryParent, childCategory: [currentCategoryName] });
+                }
+                else {
+                    // Now check if the parentCategory already exists 
+                    const parentCategoryIndex = responseToReturn.findIndex(item => item.parentCategory === currentCategoryParent);
+                    if (parentCategoryIndex === -1) {
+                        // This means that the category does not exist
+                        responseToReturn.push({ parentCategory: currentCategoryParent, childCategory: [currentCategoryName] });
+                    }
+                    else {
+                        // This means that the parent category does exist 
+                        (_b = responseToReturn[parentCategoryIndex].childCategory) === null || _b === void 0 ? void 0 : _b.push(currentCategoryName);
+                    }
+                }
+            }
+            res.json(responseToReturn);
+        }
+        catch (err) {
+            res.sendStatus(500).json({ error: 'An error occurred' });
+        }
+    });
+});

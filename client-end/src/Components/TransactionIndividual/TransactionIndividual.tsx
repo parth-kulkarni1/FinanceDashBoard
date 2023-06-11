@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { UpContext } from "Components/Context/UpContext";
@@ -86,15 +86,11 @@ function TransactionIndividaul(){ // This component will list each each transact
                     <div className="d-flex flex-gap-20 p-1">
                     <h3>Transactional Information</h3>
 
-                    <Button variant = "primary" onClick={handleAddTag}  disabled = {state.transactionIndividual.relationships.tags.data.length === 6}>
-                        Add Tag to Transaction
+                    <Button variant = "success" onClick={handleAddTag}>
+                        Add/Remove Tags to Transaction
                     </Button>
-
-                    <Button variant = "primary" disabled = {state.transactionIndividual.relationships.tags.data.length === 0}>
-                        Remove Tag From Transaction
-                    </Button>
-
-                    <Button variant = "primary">
+            
+                    <Button variant = "success">
                         Change Transaction Category
                     </Button>
 
@@ -119,20 +115,27 @@ function TransactionIndividaul(){ // This component will list each each transact
 
                     <Title> Transaction Category: {state.transactionIndividual.relationships.category.data.id}</Title>
 
-                    {state.transactionIndividual.relationships.tags.data.length ? 
+                    <Title>
 
-                        state.transactionIndividual.relationships.tags.data.map((tag) => 
+                        Transaction Tags:
 
-                        <Title> Transaction Tags: {tag.id}</Title>
+                        {state.transactionIndividual.relationships.tags.data.length ? 
 
-                        )
+                            state.transactionIndividual.relationships.tags.data.map((tag, index) => 
 
-                        :
+                              <React.Fragment key={tag.id}>
+                                {" " + tag.id}{index !== state.transactionIndividual.relationships.tags.data.length - 1 ? ', ' : ''}
+                            </React.Fragment>
 
-                        <Title> Transaction Tags: No tags provided for this transaction</Title>
+                            )
+
+                            :
+
+                        " No tags provided for this transaction"
                     
-                
-                }
+                        }
+
+                    </Title>
 
                 
 
