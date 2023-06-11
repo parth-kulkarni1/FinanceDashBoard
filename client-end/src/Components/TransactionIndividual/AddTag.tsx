@@ -2,7 +2,7 @@
 
 import React, {useState, useContext, useEffect} from "react"
 import { UpContext } from "Components/Context/UpContext";
-import { addTagsToTransaction, removeTagsToTransaction, getCategories } from "Components/Axios/AxiosCommands";
+import { addTagsToTransaction, removeTagsToTransaction } from "Components/Axios/AxiosCommands";
 
 import { Button, Form, Modal } from "react-bootstrap";
 import { RelationshipData, TransactionResource } from "up-bank-api";
@@ -14,13 +14,6 @@ function AddTag(){
     const [input, setInput] = useState<string>('')
 
     useEffect(() => {
-
-        async function fetchCategories(){
-            const data = await getCategories();
-            console.log(data, "ALL CATEGROIES RESPSOINSE")
-        }
-
-        fetchCategories();
 
         // Refreshes the component
 

@@ -710,7 +710,7 @@ router.get('/categories', async function (req:Request, res:Response, next:NextFu
 
     type responseToReturnType = {
       parentCategory: string | undefined, 
-      childCategory: string[] | undefined
+      childCategory: {id: string, name: string}[]
     }
 
     let responseToReturn: responseToReturnType[] = []
@@ -719,12 +719,13 @@ router.get('/categories', async function (req:Request, res:Response, next:NextFu
 
     for(let i = 0; i < data.data.length; i++){
 
-      const currentCategoryParent = data.data[i].relationships.parent.data?.id;
-      const currentCategoryName = data.data[i].attributes.name
+      let currentCategoryParent = data.data[i].relationships.parent.data?.id;
+      let currentCategoryName = data.data[i].attributes.name
+      let currentCategoryId = data.data[i].id
 
       if(i === 0){
         // First item scenario
-        responseToReturn.push({parentCategory: currentCategoryParent, childCategory: [currentCategoryName]})
+        responseToReturn.push({parentCategory: currentCategoryParent, childCategory: [{id:currentCategoryId, name: currentCategoryName}]})
       }
 
       else {
@@ -736,14 +737,14 @@ router.get('/categories', async function (req:Request, res:Response, next:NextFu
         if(parentCategoryIndex === -1){
           // This means that the category does not exist
 
-          responseToReturn.push({parentCategory: currentCategoryParent, childCategory: [currentCategoryName]})
+          responseToReturn.push({parentCategory: currentCategoryParent, childCategory: [{id:currentCategoryId, name: currentCategoryName}]})
 
         }
 
         else{
           // This means that the parent category does exist 
 
-          responseToReturn[parentCategoryIndex].childCategory?.push(currentCategoryName)
+          responseToReturn[parentCategoryIndex].childCategory?.push({id:currentCategoryId, name: currentCategoryName})
 
         }
 

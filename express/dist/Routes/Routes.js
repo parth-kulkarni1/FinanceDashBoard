@@ -447,22 +447,23 @@ router.get('/categories', function (req, res, next) {
             let responseToReturn = [];
             const data = yield up.categories.list();
             for (let i = 0; i < data.data.length; i++) {
-                const currentCategoryParent = (_a = data.data[i].relationships.parent.data) === null || _a === void 0 ? void 0 : _a.id;
-                const currentCategoryName = data.data[i].attributes.name;
+                let currentCategoryParent = (_a = data.data[i].relationships.parent.data) === null || _a === void 0 ? void 0 : _a.id;
+                let currentCategoryName = data.data[i].attributes.name;
+                let currentCategoryId = data.data[i].id;
                 if (i === 0) {
                     // First item scenario
-                    responseToReturn.push({ parentCategory: currentCategoryParent, childCategory: [currentCategoryName] });
+                    responseToReturn.push({ parentCategory: currentCategoryParent, childCategory: [{ id: currentCategoryId, name: currentCategoryName }] });
                 }
                 else {
                     // Now check if the parentCategory already exists 
                     const parentCategoryIndex = responseToReturn.findIndex(item => item.parentCategory === currentCategoryParent);
                     if (parentCategoryIndex === -1) {
                         // This means that the category does not exist
-                        responseToReturn.push({ parentCategory: currentCategoryParent, childCategory: [currentCategoryName] });
+                        responseToReturn.push({ parentCategory: currentCategoryParent, childCategory: [{ id: currentCategoryId, name: currentCategoryName }] });
                     }
                     else {
                         // This means that the parent category does exist 
-                        (_b = responseToReturn[parentCategoryIndex].childCategory) === null || _b === void 0 ? void 0 : _b.push(currentCategoryName);
+                        (_b = responseToReturn[parentCategoryIndex].childCategory) === null || _b === void 0 ? void 0 : _b.push({ id: currentCategoryId, name: currentCategoryName });
                     }
                 }
             }

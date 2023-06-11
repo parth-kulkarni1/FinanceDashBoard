@@ -21,6 +21,7 @@ import { UserContextProvider } from 'Components/Context/UserContext';
 
 import PrivateRoutes from 'Components/PrivateRoutes/PrivateRoutes';
 import CategoryInsight from 'Components/MonthlyCategory/MonthlyCategory';
+import CategoriseTransaction from 'Components/TransactionIndividual/CategoriseTransaction';
 
 
 function App() {
@@ -43,6 +44,8 @@ function App() {
         <Route path = "/transaction/insight/:transactionId" element = {<PrivateRoutes><TransactionInsight /></PrivateRoutes>} />
         <Route path = "/transaction/insight/:transactionId" element = {<PrivateRoutes><MonthlyGraphs/></PrivateRoutes>} />
         <Route path = "/category/:monthId" element = {<PrivateRoutes><CategoryInsight/></PrivateRoutes>} />
+        <Route path = "/transaction/categorise/:transactionId" element = {<PrivateRoutes><CategoriseTransaction/></PrivateRoutes>} />
+
 
          
       </Routes>

@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from 'axios'
 import {AccountResource, CategoryResource, ListTransactionsResponse} from 'up-bank-api'
-import {MonthlyCategoryDetailed, merchantResponse, pastTransactionsHistory, postObj } from './TypesAxios';
+import {MonthlyCategoryDetailed, categoryList, merchantResponse, pastTransactionsHistory, postObj } from './TypesAxios';
 
 
 /* This contains all axios commands made to the backend */
@@ -169,7 +169,7 @@ export async function removeTagsToTransaction(postObj: postObj){
 }
 
 export async function getCategories(){
-    const data = await axios.get<any>('/categories')
+    const {data} = await axios.get<categoryList[]>('/categories')
 
     return data
 

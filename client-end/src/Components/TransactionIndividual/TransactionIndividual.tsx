@@ -71,6 +71,10 @@ function TransactionIndividaul(){ // This component will list each each transact
         dispatch({type: 'addTag', payload: {setTags:true, tagPayload: state.transactionIndividual }})
     }
 
+    function handleCategoriseTransaction(event: React.FormEvent<HTMLButtonElement>){
+        navigate(`/transaction/categorise/${state.transactionIndividual.id}`)
+    }
+
 
     return(
 
@@ -90,7 +94,7 @@ function TransactionIndividaul(){ // This component will list each each transact
                         Add/Remove Tags to Transaction
                     </Button>
             
-                    <Button variant = "success">
+                    <Button onClick={handleCategoriseTransaction} variant = "success">
                         Change Transaction Category
                     </Button>
 
