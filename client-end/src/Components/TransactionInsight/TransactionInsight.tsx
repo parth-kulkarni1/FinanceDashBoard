@@ -36,14 +36,21 @@ function TransactionInsight(){
 
         <Card>
 
-            <img src={state.transactionInsight.merchantInfo.icon} width={50} alt = "Company Logo"></img>
-            <a target="_blank" href={state.transactionInsight.merchantInfo.domain} rel="noreferrer">
-                {state.transactionInsight.merchantInfo.domain}
-            </a>
+            {state.transactionInsight.merchantInfo &&  
 
-            <Title>Total Money Spent at {state.transactionInsight.merchantInfo.name}</Title>
+                <div>
+                    <img src={state.transactionInsight.merchantInfo.icon} width={50} alt = "Company Logo"></img>
+                    
+                    <a target="_blank" href={state.transactionInsight.merchantInfo.domain} rel="noreferrer">
+                        {state.transactionInsight.merchantInfo.domain}
+                    </a>
+
+                </div>
+            }
+
+            <Title>Total Money Spent at {state.transactionIndividual.attributes.description}</Title>
             <Subtitle>
-            This shows your transactions from the last 12 months at {state.transactionInsight.merchantInfo.name}
+            This shows your transactions from the last 12 months at {state.transactionIndividual.attributes.description}
             </Subtitle>
             <BarChart
             data={chartdata}

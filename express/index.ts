@@ -1,6 +1,7 @@
 import express, { Router } from "express";
 import { router } from "./Routes/Routes";
 import session from "express-session";
+import helmet from 'helmet'
 
 
 const app = express();
@@ -14,6 +15,7 @@ const cors_options = {
 
 app.use(express.json());
 app.use(cors(cors_options)) 
+app.use(helmet())
 
 app.use(
   session({

@@ -5,6 +5,13 @@ require('dotenv').config();
 
 import moment from "moment";
 import axios from "axios";
+import { loginController } from "../Controller/login.controller";
+import { getCookieHandler } from "../Controller/cookie.controller";
+import { logoutHandler } from "../Controller/logout.controller";
+import { getTransactionalAccountHandler } from "../Controller/accounts.transaction.controller";
+import { getSaversAccountHandler } from "../Controller/accounts.savers.controller";
+import { getTransactionsHandler } from "../Controller/transaction_acc.transaction.controller";
+import { getMonthlyTotalSpendingHandler } from "../Controller/transactions.monthly.controller";
 
 declare module 'express-session' {
   interface SessionData {
@@ -22,191 +29,19 @@ let TOKEN = ""
 const router = Router();
 
 
-router.get('/login/:id', async function(req:Request, res:Response, next:NextFunction) {
+router.get('/login/:id', loginController)
 
-  try{
-      const token = req.params.id
+router.get('/cookie', getCookieHandler)
 
-      up.updateApiKey(token)
-      TOKEN = token
+router.post('/logout', logoutHandler)
 
-      const authenticated = await up.util.ping()
+router.get('/accounts/transactional', getTransactionalAccountHandler) 
 
-      req.session.myData = true // set cookie to login
-      
-      res.json(authenticated)
+router.get('/accounts/savings', getSaversAccountHandler)
 
-  } catch(e){
+router.get('/accounts/transactional/transactions', getTransactionsHandler)
 
-    if (isUpApiError(e)) {
-      // Handle error returned from Up API
-      res.json(null)
-      return;
-    }
-
-    res.json(null) // Any other errors also to be treated as null
-    
-  }
-
-  })
-
-
-  router.get('/cookie', async function (req: Request, res:Response, next: NextFunction) {
-
-    if(req.session.myData){
-
-      res.json(true)
-
-    }
-
-    else{
-      res.json(false)
-    }
-
-  })
-
-
-  router.post('/logout', async function (req:Request, res:Response, next:NextFunction){
-
-    delete req.session.myData;
-
-  
-    res.redirect('/')
-
-
-  })
-
-
-router.get('/accounts/transactional', async function (req: Request, res: Response) {
-
-    try {
-
-      if(req.session.myData){
-
-
-        const accounts = await up.accounts.list()
-
-        TRANSACTIONAL_ID = accounts.data.find(val => val.attributes.accountType == "TRANSACTIONAL")?.id as string
-
-        const tranactionalAccount = await up.accounts.retrieve(TRANSACTIONAL_ID as string)
-
-        res.json(tranactionalAccount.data)
-
-      }
-
-      else{
-        return res.redirect('/')
-      }
-
-
-      } catch (e) {
-        if (isUpApiError(e)) {
-          // Handle error returned from Up API
-          console.log(e.response.data.errors);
-        }
-    
-        // Unexpected error
-        throw e;
-      }
-    }
-    
-)
-
-router.get('/accounts/savings', async function (req: Request, res: Response) {
-
-  try {
-
-        const accounts = await up.accounts.list()
-
-        SAVERS_ID = accounts.data.find(val => val.attributes.accountType == "SAVER")?.id as string
-
-        const savingsAccount = await up.accounts.retrieve(SAVERS_ID as string)
-
-      res.json(savingsAccount.data);
-
-    } catch (e) {
-      if (isUpApiError(e)) {
-        // Handle error returned from Up API
-        console.log(e.response.data.errors);
-      }
-  
-      // Unexpected error
-      throw e;
-    }
-  }
-  
-)
-
-
-router.get('/accounts/transactional/transactions', async function (req: Request, res: Response) {
-
-  try{
-
-      const transactions = await up.transactions.listByAccount(TRANSACTIONAL_ID);
-      
-      res.json(transactions)
-      
-
-
-  }
-
-  catch(e){
-
-      if (isUpApiError(e)) {
-        // Handle error returned from Up API
-        console.log(e.response.data.errors);
-      }
-
-      // Unexpected error
-      throw e;
-
-  }
-
-
-})
-
-router.get('/accounts/trasactional/monthly', async function (req:Request, res: Response) {
-
-  
-  try{
-
-    const startOfMonth = moment().startOf('month').toISOString()
-
-    const transactions = await up.transactions.listByAccount(TRANSACTIONAL_ID, {filterSince: startOfMonth });
-    
-    let total: number = 0;
-
-    // Calculate the monthly cost 
-
-    for(let i = 0; i < transactions.data.length; i++){
-
-      if(transactions.data[i].attributes.amount.valueInBaseUnits < 0 && transactions.data[i].attributes.isCategorizable === true){
-
-          total = total + Math.abs(parseFloat(transactions.data[i].attributes.amount.value))
-
-      }
-
-    }
-
-    res.json(total.toFixed(2))
-
-
-  }
-
-  catch(e){
-
-    if (isUpApiError(e)) {
-      // Handle error returned from Up API
-      console.log(e.response.data.errors);
-    }
-
-    // Unexpected error
-    throw e;
-
-  }
-
-
-})
+router.get('/accounts/trasactional/monthly', getMonthlyTotalSpendingHandler)
 
 router.get('/transactions/next', async function(req: Request, res:Response){
 
@@ -760,6 +595,42 @@ router.get('/categories', async function (req:Request, res:Response, next:NextFu
     res.sendStatus(500).json({error: 'An error occurred'})
   }
 
+
+})
+
+router.patch('/categories/change', async function (req: Request, res: Response, next: NextFunction){
+
+  try{
+
+    const transactionID = req.body.transactionId
+    const categoryData = req.body.category
+
+    const headers = {
+      'Authorization': `Bearer ${TOKEN}`,
+      'Content-Type'  : 'application/json'
+    };
+
+    const data = {
+      data:{
+        type: categoryData.type, 
+        id: categoryData.id
+      }
+    }
+
+    const response = await axios.patch(`https://api.up.com.au/api/v1/transactions/${transactionID}/relationships/category`, data, {headers})
+
+    if(response.status === 204){
+        res.sendStatus(204)
+    }
+
+    else{
+      res.sendStatus(500)
+    }
+
+
+  } catch(err){
+    res.sendStatus(500).json({error: "An error has occurred."})
+  }
 
 })
 

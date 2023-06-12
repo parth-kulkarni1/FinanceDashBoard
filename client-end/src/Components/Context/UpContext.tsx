@@ -7,7 +7,7 @@ import { UpReducer } from "./UpReducer";
 import { brandFetchSearch, pastTransactionsHistory, MonthlyCategoryDetailed } from "Components/Axios/TypesAxios";
 
 export type TransactionInsightType = {
-    merchantInfo: brandFetchSearch
+    merchantInfo: brandFetchSearch | null
     transaction: pastTransactionsHistory
 }
 
@@ -46,7 +46,7 @@ const initalState: CurrentState = {
 export type CurrentAction = {
     type: 'savingAccountBalance' | 'transactionalAccountBalance'| 'getTransactions' 
           | 'getMonthlySpending' | 'transactionIndividual' | 'transactionInsight'
-          | 'categoryMonthlyDetailed' | 'addTag' | 'updateTags'
+          | 'categoryMonthlyDetailed' | 'addTag' | 'updateTags' | 'updateCategory'
     payload: AccountResource | ListTransactionsResponse | TransactionResource | TransactionInsightType
           | MonthlyCategoryDetailed[] | addTags | string | null | boolean
             

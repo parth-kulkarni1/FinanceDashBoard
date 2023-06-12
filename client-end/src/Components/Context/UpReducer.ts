@@ -50,6 +50,11 @@ export function UpReducer(state: CurrentState, action: CurrentAction): CurrentSt
 
             return {...state, transactionIndividual: newTag }
 
+        case 'updateCategory':
+            const newCategory = action.payload as TransactionResource
+
+            return {...state, transactionIndividual: newCategory}
+
 
 
         default:

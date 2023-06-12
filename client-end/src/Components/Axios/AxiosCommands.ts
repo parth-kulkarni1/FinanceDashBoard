@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios'
+import axios, { Axios, AxiosResponse } from 'axios'
 import {AccountResource, CategoryResource, ListTransactionsResponse} from 'up-bank-api'
 import {MonthlyCategoryDetailed, categoryList, merchantResponse, pastTransactionsHistory, postObj } from './TypesAxios';
 
@@ -172,6 +172,12 @@ export async function getCategories(){
     const {data} = await axios.get<categoryList[]>('/categories')
 
     return data
+}
+
+export async function categoriseTransaction(postObj: any){
+    const response = await axios.patch<AxiosResponse>('/categories/change', postObj)
+
+    return response
 
 
 }

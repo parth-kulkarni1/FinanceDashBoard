@@ -18,131 +18,26 @@ const up_bank_api_1 = require("up-bank-api");
 require('dotenv').config();
 const moment_1 = __importDefault(require("moment"));
 const axios_1 = __importDefault(require("axios"));
+const login_controller_1 = require("../Controller/login.controller");
+const cookie_controller_1 = require("../Controller/cookie.controller");
+const logout_controller_1 = require("../Controller/logout.controller");
+const accounts_transaction_controller_1 = require("../Controller/accounts.transaction.controller");
+const accounts_savers_controller_1 = require("../Controller/accounts.savers.controller");
+const transaction_acc_transaction_controller_1 = require("../Controller/transaction_acc.transaction.controller");
+const transactions_monthly_controller_1 = require("../Controller/transactions.monthly.controller");
 const up = new up_bank_api_1.UpApi();
 let TRANSACTIONAL_ID = "";
 let SAVERS_ID = "";
 let TOKEN = "";
 const router = (0, express_1.Router)();
 exports.router = router;
-router.get('/login/:id', function (req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const token = req.params.id;
-            up.updateApiKey(token);
-            TOKEN = token;
-            const authenticated = yield up.util.ping();
-            req.session.myData = true; // set cookie to login
-            res.json(authenticated);
-        }
-        catch (e) {
-            if ((0, up_bank_api_1.isUpApiError)(e)) {
-                // Handle error returned from Up API
-                res.json(null);
-                return;
-            }
-            res.json(null); // Any other errors also to be treated as null
-        }
-    });
-});
-router.get('/cookie', function (req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (req.session.myData) {
-            res.json(true);
-        }
-        else {
-            res.json(false);
-        }
-    });
-});
-router.post('/logout', function (req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        delete req.session.myData;
-        res.redirect('/');
-    });
-});
-router.get('/accounts/transactional', function (req, res) {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            if (req.session.myData) {
-                const accounts = yield up.accounts.list();
-                TRANSACTIONAL_ID = (_a = accounts.data.find(val => val.attributes.accountType == "TRANSACTIONAL")) === null || _a === void 0 ? void 0 : _a.id;
-                const tranactionalAccount = yield up.accounts.retrieve(TRANSACTIONAL_ID);
-                res.json(tranactionalAccount.data);
-            }
-            else {
-                return res.redirect('/');
-            }
-        }
-        catch (e) {
-            if ((0, up_bank_api_1.isUpApiError)(e)) {
-                // Handle error returned from Up API
-                console.log(e.response.data.errors);
-            }
-            // Unexpected error
-            throw e;
-        }
-    });
-});
-router.get('/accounts/savings', function (req, res) {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const accounts = yield up.accounts.list();
-            SAVERS_ID = (_a = accounts.data.find(val => val.attributes.accountType == "SAVER")) === null || _a === void 0 ? void 0 : _a.id;
-            const savingsAccount = yield up.accounts.retrieve(SAVERS_ID);
-            res.json(savingsAccount.data);
-        }
-        catch (e) {
-            if ((0, up_bank_api_1.isUpApiError)(e)) {
-                // Handle error returned from Up API
-                console.log(e.response.data.errors);
-            }
-            // Unexpected error
-            throw e;
-        }
-    });
-});
-router.get('/accounts/transactional/transactions', function (req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const transactions = yield up.transactions.listByAccount(TRANSACTIONAL_ID);
-            res.json(transactions);
-        }
-        catch (e) {
-            if ((0, up_bank_api_1.isUpApiError)(e)) {
-                // Handle error returned from Up API
-                console.log(e.response.data.errors);
-            }
-            // Unexpected error
-            throw e;
-        }
-    });
-});
-router.get('/accounts/trasactional/monthly', function (req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const startOfMonth = (0, moment_1.default)().startOf('month').toISOString();
-            const transactions = yield up.transactions.listByAccount(TRANSACTIONAL_ID, { filterSince: startOfMonth });
-            let total = 0;
-            // Calculate the monthly cost 
-            for (let i = 0; i < transactions.data.length; i++) {
-                if (transactions.data[i].attributes.amount.valueInBaseUnits < 0 && transactions.data[i].attributes.isCategorizable === true) {
-                    total = total + Math.abs(parseFloat(transactions.data[i].attributes.amount.value));
-                }
-            }
-            res.json(total.toFixed(2));
-        }
-        catch (e) {
-            if ((0, up_bank_api_1.isUpApiError)(e)) {
-                // Handle error returned from Up API
-                console.log(e.response.data.errors);
-            }
-            // Unexpected error
-            throw e;
-        }
-    });
-});
+router.get('/login/:id', login_controller_1.loginController);
+router.get('/cookie', cookie_controller_1.getCookieHandler);
+router.post('/logout', logout_controller_1.logoutHandler);
+router.get('/accounts/transactional', accounts_transaction_controller_1.getTransactionalAccountHandler);
+router.get('/accounts/savings', accounts_savers_controller_1.getSaversAccountHandler);
+router.get('/accounts/transactional/transactions', transaction_acc_transaction_controller_1.getTransactionsHandler);
+router.get('/accounts/trasactional/monthly', transactions_monthly_controller_1.getMonthlyTotalSpendingHandler);
 router.get('/transactions/next', function (req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -471,6 +366,34 @@ router.get('/categories', function (req, res, next) {
         }
         catch (err) {
             res.sendStatus(500).json({ error: 'An error occurred' });
+        }
+    });
+});
+router.patch('/categories/change', function (req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const transactionID = req.body.transactionId;
+            const categoryData = req.body.category;
+            const headers = {
+                'Authorization': `Bearer ${TOKEN}`,
+                'Content-Type': 'application/json'
+            };
+            const data = {
+                data: {
+                    type: categoryData.type,
+                    id: categoryData.id
+                }
+            };
+            const response = yield axios_1.default.patch(`https://api.up.com.au/api/v1/transactions/${transactionID}/relationships/category`, data, { headers });
+            if (response.status === 204) {
+                res.sendStatus(204);
+            }
+            else {
+                res.sendStatus(500);
+            }
+        }
+        catch (err) {
+            res.sendStatus(500).json({ error: "An error has occurred." });
         }
     });
 });

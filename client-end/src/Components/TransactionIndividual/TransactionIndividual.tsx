@@ -60,7 +60,15 @@ function TransactionIndividaul(){ // This component will list each each transact
 
     function handleInsightView(){
 
-        dispatch({type: 'transactionInsight', payload: {merchantInfo: info.brandInfo, transaction: previousTransactions }})
+        if(info){
+            // A valid merchant is found and its not null
+            dispatch({type: 'transactionInsight', payload: {merchantInfo: info.brandInfo, transaction: previousTransactions }})
+        }
+
+        else{
+            // A valid merchant is not found and its null
+            dispatch({type: 'transactionInsight', payload: {merchantInfo: null, transaction: previousTransactions}})
+        }
 
         navigate(`/transaction/insight/${state.transactionIndividual.id}`)
 
