@@ -1,4 +1,4 @@
-import { AccountResource, ListTransactionsResponse, TagInputResourceIdentifier, TransactionResource } from "up-bank-api";
+import { AccountResource, ListTransactionsResponse, TransactionResource } from "up-bank-api";
 import { CurrentState, CurrentAction, TransactionInsightType, addTags } from "./UpContext";
 import { MonthlyCategoryDetailed } from "Components/Axios/TypesAxios";
 
