@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.PORT || 4000;
 const cors = require('cors')
 const cors_options = {
-  origin: "https://64903eec8dad3b53b9d61b62--stately-crisp-41befd.netlify.app/",
+  origin: "https://main--stately-crisp-41befd.netlify.app",
   credentials: true
 }
 
