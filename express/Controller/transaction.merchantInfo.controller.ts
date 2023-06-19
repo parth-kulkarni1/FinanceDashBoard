@@ -3,7 +3,7 @@
 import { Request, Response, NextFunction } from "express";
 import axios from "axios";
 
-export async function getMerchantInfoHandler(req:Request, res:Response, next:NextFunction){
+export async function getMerchantInfoHandler(req:Request<{id: string}>, res:Response<any | null>, next:NextFunction){
     
   try{
 

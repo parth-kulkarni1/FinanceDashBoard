@@ -1,8 +1,9 @@
 import axios, { AxiosResponse } from "axios";
 import { Request, Response, NextFunction } from "express";
 import { up, TOKEN } from "../config";
+import { errorType } from "../Types/Axios/controllersTypes";
 
-export async function changeTransactionCategoryHandler(req: Request<{}, {}, {transactionId: string, category: {type: string, id: string} }>, res: Response, next:NextFunction){
+export async function changeTransactionCategoryHandler(req: Request<{}, {}, {transactionId: string, category: {type: string, id: string} }>, res: Response<number | errorType>, next:NextFunction){
     try{
 
         const transactionID = req.body.transactionId

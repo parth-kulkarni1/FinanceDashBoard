@@ -23,6 +23,7 @@ function getIncomeVsSpendingHandler(req, res, next) {
             const requestedMonthStart = (0, moment_1.default)(req.params.id, 'MMMM YYYY').toISOString();
             const requestedMonthEnd = (0, moment_1.default)(requestedMonthStart).endOf('month').toISOString();
             const data = yield config_1.up.transactions.list({ filterSince: requestedMonthStart, filterUntil: requestedMonthEnd, pageSize: 100 });
+            // Need to fetch all data here.. 
             let income = 0;
             let spending = 0;
             for (let i = 0; i < data.data.length; i++) {

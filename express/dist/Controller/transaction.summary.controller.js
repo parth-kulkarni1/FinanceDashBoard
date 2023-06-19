@@ -26,11 +26,13 @@ function getTransactionSummaryHandler(req, res, next) {
                 sumOfTransactions += (Math.abs(parseFloat(updated[i].attributes.amount.value)));
             }
             const average = (sumOfTransactions / numberOfTransactions);
-            const userMerchantSummary = { numberOfTransactions: numberOfTransactions, sumOfTransactions: sumOfTransactions, averageOfTransactions: average };
+            const userMerchantSummary = { numberOfTransactions: numberOfTransactions,
+                sumOfTransactions: sumOfTransactions,
+                averageOfTransactions: average };
             res.json({ transactionSummary: userMerchantSummary, pastTransactionsList: updated });
         }
         catch (e) {
-            console.log(e);
+            res.json({ error: "Something has gone wrong here.." });
         }
     });
 }

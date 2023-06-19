@@ -2,12 +2,13 @@
 
 import { Request, Response, NextFunction } from "express";
 import { up } from "../config";
+import { errorType, listTop5CompaniesResponse } from "../Types/Axios/controllersTypes";
 
 
 import moment from "moment";
 import { ListTransactionsResponse } from "up-bank-api";
 
-export async function getTransactionsTop5Handler(req: Request, res: Response, next: NextFunction){
+export async function getTransactionsTop5Handler(req: Request<{id:string}>, res: Response<listTop5CompaniesResponse[] | errorType>, next: NextFunction){
     try{
   
         const requestedMonthStart = moment(req.params.id, 'MMMM YYYY').toISOString()
@@ -28,12 +29,7 @@ export async function getTransactionsTop5Handler(req: Request, res: Response, ne
         } while (nextPageToken);
     
     
-        type response = {
-          companyName: string, 
-          frequency: number
-        }
-    
-        const data: response[] = []
+        const data: listTop5CompaniesResponse[] = []
     
         // We will now iterate through the array, and pick out only companies and allocate frequency of visits 
     
@@ -87,7 +83,7 @@ export async function getTransactionsTop5Handler(req: Request, res: Response, ne
       
       }
       catch(err){
-        res.json(err)
+        res.json({error: "Something has gone wrong in calculating your top 5 places in the month."})
       }
 
 

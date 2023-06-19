@@ -16,6 +16,8 @@ function getAllCategoriesHandler(req, res, next) {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            // Need to model the response of the data
+            // Iterate through the array, grab the parent category and append child categories to  it
             let responseToReturn = [];
             const data = yield config_1.up.categories.list();
             for (let i = 0; i < data.data.length; i++) {

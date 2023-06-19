@@ -16,6 +16,10 @@ export async function getIncomeVsSpendingHandler(req:Request, res:Response, next
 
     const data = await up.transactions.list({filterSince: requestedMonthStart, filterUntil: requestedMonthEnd, pageSize: 100})
 
+    // Need to fetch all data here.. 
+
+    
+
 
     let income = 0; 
     let spending = 0;

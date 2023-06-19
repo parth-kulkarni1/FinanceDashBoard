@@ -1,0 +1,23 @@
+.page-container{
+    background-color: #385170;
+    min-height: 100vh;
+}
+
+.text-wrap {
+    max-width: 25%;
+}
+
+.text-description{
+    font-size: 20px;
+    font-weight:300;
+    color: black;
+}
+  
+
+.page-container{
+    min-height: 100vh;
+}
+
+.page-title{
+    color: orange;
+}

@@ -20,13 +20,21 @@ const up_bank_api_1 = require("up-bank-api");
 function getNextPaginatedDataHandler(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const next = req.query.link;
-            const { data } = yield axios_1.default.get(next, { headers: { "Authorization": `Bearer ${config_1.TOKEN}` } });
+            const nextLink = req.query.link;
+            // Make a GET request to the next link of paginated data
+            const { data } = yield axios_1.default.get(nextLink, { headers: { "Authorization": `Bearer ${config_1.TOKEN}` } });
             res.json(data);
         }
         catch (e) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {
+                // Handle error returned from Up API
                 console.log(e.response.data.errors);
+                res.status(500).json({ error: "An error occurred while retrieving the next paginated data." });
+            }
+            else {
+                // Unexpected error
+                console.log(e);
+                res.status(500).json({ error: "An unexpected error occurred." });
             }
         }
     });

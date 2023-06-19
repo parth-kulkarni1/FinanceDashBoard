@@ -2,12 +2,13 @@
 
 import { Request, Response, NextFunction } from "express";
 import { up } from "../config";
+import { childCategoryType, dataToReturnType, errorType } from "../Types/Axios/controllersTypes";
 
 
 import moment from "moment";
 import { ListTransactionsResponse, TransactionResource } from "up-bank-api";
 
-export async function getMonthlyCategoryInsightsHandler (req:Request, res: Response, next: NextFunction){
+export async function getMonthlyCategoryInsightsHandler (req:Request<{id:string}>, res: Response<dataToReturnType[] | errorType>, next: NextFunction){
     
   // Establish date boundaries
   const requestedMonthStart = moment(req.params.id, 'MMMM YYYY').toISOString() // Reterive the respective month
@@ -37,16 +38,6 @@ export async function getMonthlyCategoryInsightsHandler (req:Request, res: Respo
     const data = allTransactions[0]
 
     // Time to loop through the collected data and model it so we can present it to the front-end easily 
-
-    type childCategoryType = {
-      categoryName: string | undefined,
-      transaction: TransactionResource[]
-    }
-
-    type dataToReturnType = {
-      parentCategory: string | undefined, 
-      childCategory: childCategoryType[]
-    }
 
     // Contains an array of objects with object type defined above
     const DataToReturn: dataToReturnType[] = []
@@ -128,7 +119,7 @@ export async function getMonthlyCategoryInsightsHandler (req:Request, res: Respo
   }
 
   catch(err){
-    res.json(err)
+    res.json({error: "Something has gone wrong here"})
   }
 
 }

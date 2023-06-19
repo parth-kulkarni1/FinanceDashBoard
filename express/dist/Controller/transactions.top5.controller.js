@@ -64,7 +64,7 @@ function getTransactionsTop5Handler(req, res, next) {
             res.json(data.slice(0, 5));
         }
         catch (err) {
-            res.json(err);
+            res.json({ error: "Something has gone wrong in calculating your top 5 places in the month." });
         }
     });
 }

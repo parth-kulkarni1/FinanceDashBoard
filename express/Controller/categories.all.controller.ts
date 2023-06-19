@@ -2,8 +2,10 @@
 
 import { Request, Response, NextFunction } from "express";
 import { up } from "../config";
+import { responseToReturnType, errorType } from "../Types/Axios/controllersTypes";
 
-export async function getAllCategoriesHandler(req: Request, res: Response, next:NextFunction){
+
+export async function getAllCategoriesHandler(req: Request, res: Response<responseToReturnType[] | errorType>, next:NextFunction){
     
   try{
 
@@ -11,11 +13,7 @@ export async function getAllCategoriesHandler(req: Request, res: Response, next:
 
     // Iterate through the array, grab the parent category and append child categories to  it
 
-    type responseToReturnType = {
-      parentCategory: string | undefined, 
-      childCategory: {id: string, name: string}[]
-    }
-
+  
     let responseToReturn: responseToReturnType[] = []
 
     const data = await up.categories.list()

@@ -1,5 +1,4 @@
 "use strict";
-// This controller returns the total amount of spending within the month
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -21,12 +20,13 @@ function getMonthlyTotalSpendingHandler(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const startOfMonth = (0, moment_1.default)().startOf('month').toISOString();
+            // Retrieve transactions for the current month
             const transactions = yield config_1.up.transactions.listByAccount(config_1.TRANSACTIONAL_ID, { filterSince: startOfMonth });
             let total = 0;
-            // Calculate the monthly cost 
+            // Calculate the monthly spending
             for (let i = 0; i < transactions.data.length; i++) {
                 if (transactions.data[i].attributes.amount.valueInBaseUnits < 0 && transactions.data[i].attributes.isCategorizable === true) {
-                    total = total + Math.abs(parseFloat(transactions.data[i].attributes.amount.value));
+                    total += Math.abs(parseFloat(transactions.data[i].attributes.amount.value));
                 }
             }
             res.json(total.toFixed(2));
@@ -35,9 +35,13 @@ function getMonthlyTotalSpendingHandler(req, res, next) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {
                 // Handle error returned from Up API
                 console.log(e.response.data.errors);
+                res.status(500).json({ error: "An error occurred while retrieving the monthly total spending." });
             }
-            // Unexpected error
-            throw e;
+            else {
+                // Unexpected error
+                console.log(e);
+                res.status(500).json({ error: "An unexpected error occurred." });
+            }
         }
     });
 }

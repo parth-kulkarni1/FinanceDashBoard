@@ -2,23 +2,27 @@
 
 import { Request, Response, NextFunction } from "express";
 import axios from "axios";
-import {TOKEN} from '../config'
+import { TOKEN } from '../config';
 import { ListTransactionsResponse, isUpApiError } from "up-bank-api";
+import { errorType } from "../Types/Axios/controllersTypes";
 
-export async function getNextPaginatedDataHandler(req:Request, res:Response, next:NextFunction){
+export async function getNextPaginatedDataHandler(req: Request, res: Response<ListTransactionsResponse| errorType>, next: NextFunction) {
+  try {
+    const nextLink = req.query.link as string;
 
-    try{
+    // Make a GET request to the next link of paginated data
+    const { data } = await axios.get<ListTransactionsResponse>(nextLink, { headers: { "Authorization": `Bearer ${TOKEN}` } });
 
-        const next = req.query.link as string;
-        
-        const {data} = await axios.get<ListTransactionsResponse>(next, { headers: {"Authorization" : `Bearer ${TOKEN}`} })
-    
-        res.json(data)
-        
-    
-      } catch(e){
-        if (isUpApiError(e)) {
-          console.log(e.response.data.errors)
-        }
-      }
+    res.json(data);
+  } catch (e) {
+    if (isUpApiError(e)) {
+      // Handle error returned from Up API
+      console.log(e.response.data.errors);
+      res.status(500).json({ error: "An error occurred while retrieving the next paginated data." });
+    } else {
+      // Unexpected error
+      console.log(e);
+      res.status(500).json({ error: "An unexpected error occurred." });
+    }
+  }
 }

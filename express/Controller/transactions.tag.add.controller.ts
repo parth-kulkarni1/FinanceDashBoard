@@ -2,8 +2,9 @@
 
 import { Request, Response, NextFunction } from "express";
 import { up } from "../config";
+import { errorType, tagsCommonType } from "../Types/Axios/controllersTypes";
 
-export async function addTagsToTransactionHandler(req: Request, res:Response, next: NextFunction){
+export async function addTagsToTransactionHandler(req: Request<{}, {}, tagsCommonType>, res:Response<number | errorType>, next: NextFunction){
     
   try{
   

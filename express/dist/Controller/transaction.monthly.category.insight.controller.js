@@ -36,6 +36,7 @@ function getMonthlyCategoryInsightsHandler(req, res, next) {
                 nextPageToken = response.links.next;
             } while (nextPageToken);
             const data = allTransactions[0];
+            // Time to loop through the collected data and model it so we can present it to the front-end easily 
             // Contains an array of objects with object type defined above
             const DataToReturn = [];
             /* Cases to consider
@@ -84,7 +85,7 @@ function getMonthlyCategoryInsightsHandler(req, res, next) {
             res.json(DataToReturn);
         }
         catch (err) {
-            res.json(err);
+            res.json({ error: "Something has gone wrong here" });
         }
     });
 }

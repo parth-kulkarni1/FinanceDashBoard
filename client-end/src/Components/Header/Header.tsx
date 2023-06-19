@@ -34,8 +34,8 @@ function Header(){
                     {!user ?
 
                     <div className="d-flex">
-                        <Nav.Link> About</Nav.Link>
-                        <Nav.Link> Login</Nav.Link>
+                        <Nav.Link onClick={() => navigate('/about')}> About</Nav.Link>
+                        <Nav.Link onClick={() => navigate('/')}> Login</Nav.Link>
                     </div>
                     :
 

@@ -1,5 +1,4 @@
 "use strict";
-// Returns all the transactions associated with the transactional account.
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -23,9 +22,13 @@ function getTransactionsHandler(req, res, next) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {
                 // Handle error returned from Up API
                 console.log(e.response.data.errors);
+                res.status(500).json({ error: "An error occurred while retrieving transactions." });
             }
-            // Unexpected error
-            throw e;
+            else {
+                // Unexpected error
+                console.log(e);
+                res.status(500).json({ error: "An unexpected error occurred." });
+            }
         }
     });
 }

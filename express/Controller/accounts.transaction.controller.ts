@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import {up,TRANSACTIONAL_ID,setTransactionalId} from '../config'
-import { isUpApiError } from "up-bank-api";
+import { AccountResource, isUpApiError } from "up-bank-api";
 
-export async function getTransactionalAccountHandler(req: Request, res: Response, next: NextFunction){
+export async function getTransactionalAccountHandler(req: Request, res: Response<AccountResource>, next: NextFunction){
 
     try {
 

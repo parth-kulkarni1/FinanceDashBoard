@@ -2,8 +2,10 @@
 
 import { Request, Response, NextFunction } from "express";
 import { up } from "../config";
+import { userMerchantSummary, transactionSummaryResponse, errorType } from "../Types/Axios/controllersTypes";
 
-export async function getTransactionSummaryHandler (req:Request,res:Response, next:NextFunction){
+export async function getTransactionSummaryHandler (req:Request<{}, {}, {categoryName: string, merchantName: string}>
+                                                    ,res:Response<transactionSummaryResponse | errorType>, next:NextFunction){
     
   try{
 
@@ -12,7 +14,7 @@ export async function getTransactionSummaryHandler (req:Request,res:Response, ne
 
     const transactionsCategorised = await up.transactions.list({filterCategory: categoryDescription})
 
-    const updated = transactionsCategorised.data.filter((val:any) => val.attributes.description === merchantName)
+    const updated = transactionsCategorised.data.filter((val) => val.attributes.description === merchantName)
 
     // Now lets do some maths on the calculations..
 
@@ -28,11 +30,13 @@ export async function getTransactionSummaryHandler (req:Request,res:Response, ne
 
     const average = (sumOfTransactions / numberOfTransactions)
 
-    const userMerchantSummary = {numberOfTransactions: numberOfTransactions, sumOfTransactions: sumOfTransactions, averageOfTransactions: average}
+    const userMerchantSummary: userMerchantSummary = {numberOfTransactions: numberOfTransactions, 
+                                                      sumOfTransactions: sumOfTransactions,
+                                                      averageOfTransactions: average}
 
     res.json({transactionSummary: userMerchantSummary, pastTransactionsList: updated})
 
   } catch(e){
-    console.log(e)
+    res.json({error: "Something has gone wrong here.."})
   }
 }
