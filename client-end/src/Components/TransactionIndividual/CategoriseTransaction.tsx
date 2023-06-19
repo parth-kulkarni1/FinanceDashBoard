@@ -3,7 +3,7 @@ import { UpContext } from "Components/Context/UpContext";
 import { getCategories, categoriseTransaction } from "Components/Axios/AxiosCommands";
 import { categoryList } from "Components/Axios/TypesAxios";
 
-import { Card, Text, Metric, Divider, Button } from "@tremor/react";
+import { Card, Metric, Divider, Button } from "@tremor/react";
 import { Form } from "react-bootstrap";
 
 function CategoriseTransaction(){
