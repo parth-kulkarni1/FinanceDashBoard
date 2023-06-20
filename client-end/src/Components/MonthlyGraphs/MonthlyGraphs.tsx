@@ -10,7 +10,6 @@ import { SelectBox, SelectBoxItem } from "@tremor/react";
 
 
 import moment from "moment";
-import { fileURLToPath } from "url";
 
 type Categorical = {
     category: string,
@@ -30,7 +29,7 @@ function MonthlyGraphs(){
 
     const lastTwelveMonths = getLastTwelveMonthsWithYears();
 
-    const [value, setValue] = useState<string>('')
+    const [value] = useState<string>('')
 
     const [monthlyData, setMonthlyData] = useState<MonthlyData[] | null>(null);
     const [monthlyCategoricalData, setMonthlyCategoicalData] = useState<Categorical[] | null>(null)
