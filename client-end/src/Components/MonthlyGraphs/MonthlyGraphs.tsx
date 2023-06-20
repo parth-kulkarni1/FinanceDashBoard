@@ -222,14 +222,23 @@ function MonthlyGraphs(){
             <Title>Top 5 Visited Places in {selectedMonthPopularItems}</Title>
 
             <List>
-                {monthlyPopularTrips.map((company, index) => (
+                {monthlyPopularTrips.length ? monthlyPopularTrips.map((company, index) => (
                     <ListItem key = {company.companyName}>
 
                         <span> {index + 1} - {company.companyName}</span>
                         <span>Vist : {company.frequency} in {selectedMonthPopularItems}</span>
 
                     </ListItem>
-                ))}
+
+
+                ))
+
+                    :
+
+                    <h3>Nothing To Display</h3>
+            
+            
+                }
 
             </List>
 
