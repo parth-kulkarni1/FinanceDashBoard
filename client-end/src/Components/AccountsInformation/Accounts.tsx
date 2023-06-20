@@ -13,7 +13,7 @@ function Accounts(){
 
             state.savingsAccountBalance && state.trasactionalAccountBalance &&
 
-                <div className="d-flex">
+                <div className="d-flex flex-gap-20">
        
                     <Card maxWidth="max-w-md" marginTop="mt-5" decoration="top" decorationColor="indigo">
                         <Text>{state.trasactionalAccountBalance.attributes.displayName} Account</Text>

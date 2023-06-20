@@ -34,17 +34,29 @@ function Dashboard(){
   }, [dispatch])
 
     return(
-        <div>
+      <div className='container'>
+  <div className='row'>
+    <div className='col'>
+      <Accounts />
+    </div>
+  </div>
 
-          <Accounts />
+  <div className='row'>
+    <div className='col-md-6'>
+      <div className='p-2'>
+        <TransactionsTable />
+      </div>
+    </div>
+    <div className='col-md-6'>
+      <div className='p-2' style={{ height: '500px' }}>
+        <MonthlyGraphs />
+      </div>
+    </div>
+  </div>
+</div>
 
-          <div className='d-flex flex-gap-20  p-2'>
-            <TransactionsTable />
-            <MonthlyGraphs />
-
-          </div>
-            
-        </div>
+    
+    
     )
 
 

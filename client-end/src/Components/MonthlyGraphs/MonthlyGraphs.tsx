@@ -6,10 +6,11 @@ import { useNavigate } from "react-router-dom";
 
 import { Card, BarChart, Title, DonutChart, List, ListItem } from "@tremor/react";
 import { Button } from "react-bootstrap";
-
+import { SelectBox, SelectBoxItem } from "@tremor/react";
 
 
 import moment from "moment";
+import { fileURLToPath } from "url";
 
 type Categorical = {
     category: string,
@@ -28,6 +29,8 @@ function MonthlyGraphs(){
     const navigate = useNavigate();
 
     const lastTwelveMonths = getLastTwelveMonthsWithYears();
+
+    const [value, setValue] = useState<string>('')
 
     const [monthlyData, setMonthlyData] = useState<MonthlyData[] | null>(null);
     const [monthlyCategoricalData, setMonthlyCategoicalData] = useState<Categorical[] | null>(null)
@@ -85,29 +88,27 @@ function MonthlyGraphs(){
     }, [])
 
 
-    async function handleRequestedMonth(event: React.FormEvent<HTMLButtonElement>){
+    async function handleRequestedMonth(value: string){
 
-        const month = event.currentTarget.id
-        const data = await getMonthlySummary(month)
+        const data = await getMonthlySummary(value)
         setMonthlyData(data)
-        setSelectedMonth(month)
+        setSelectedMonth(value)
 
     }
 
-    async function handleRequestedCategoryMonth(event: React.FormEvent<HTMLButtonElement>){
+    async function handleRequestedCategoryMonth(value:string){
 
-        const month = event.currentTarget.id
-        const data = await getMonthlyCategorySummary(month)
+        const data = await getMonthlyCategorySummary(value)
         setMonthlyCategoicalData(data)
-        setSelectedMonthCategory(month)
+        setSelectedMonthCategory(value)
+
     }
 
-    async function handleRequestedPopularItemsMonth(event: React.FormEvent<HTMLButtonElement>){
+    async function handleRequestedPopularItemsMonth(value: string){
 
-        const month = event.currentTarget.id
-        const data = await getMonthlyPopularCompanies(month)
+        const data = await getMonthlyPopularCompanies(value)
         setMonthlyPopularTrips(data)
-        setSelecteMonthPopularItems(month)
+        setSelecteMonthPopularItems(value)
     }
 
     async function handleExpandCategory(event: React.FormEvent<HTMLButtonElement>){
@@ -151,9 +152,18 @@ function MonthlyGraphs(){
             </div>
 
             <div className="d-flex justify-content-around flex-gap-20">
-                {lastTwelveMonths.map((month) => 
-                    <Button variant={month === selectedMonth ? "warning" : "success"} onClick={handleRequestedMonth} id={month}>{moment(month).format('MMMM')}</Button> 
-                )}
+
+                <SelectBox value={value} onValueChange={handleRequestedMonth} placeholder="Select a month">
+
+                    {lastTwelveMonths.reverse().map((month) => (
+
+                        <SelectBoxItem key={month} value={month} text={month}  />
+                        
+                    ))}
+
+
+                </SelectBox>
+
             </div>
 
         </Card>
@@ -186,9 +196,17 @@ function MonthlyGraphs(){
             </div>
 
             <div className="d-flex justify-content-around flex-gap-20">
-                {lastTwelveMonths.map((month) => 
-                    <Button variant={month === selectedMonthCategory ? "warning" : "success"} onClick={handleRequestedCategoryMonth} id={month}>{moment(month).format('MMMM')}</Button> 
-                )}
+                
+              <SelectBox value={value} onValueChange={handleRequestedCategoryMonth} placeholder="Select a month">
+
+                    {lastTwelveMonths.reverse().map((month) => (
+
+                        <SelectBoxItem key={month} value={month} text={month}  />
+                        
+                    ))}
+
+                </SelectBox>
+
             </div>
 
 
@@ -220,9 +238,17 @@ function MonthlyGraphs(){
 
             
             <div className="d-flex justify-content-around flex-gap-20">
-                {lastTwelveMonths.map((month) => 
-                    <Button variant={month === selectedMonthPopularItems ? "warning" : "success"} onClick={handleRequestedPopularItemsMonth} id={month}>{moment(month).format('MMMM')}</Button> 
-                )}
+                
+              <SelectBox value={value} onValueChange={handleRequestedPopularItemsMonth} placeholder="Select a month">
+
+                    {lastTwelveMonths.reverse().map((month) => (
+
+                        <SelectBoxItem key={month} value={month} text={month}  />
+                        
+                    ))}
+
+                </SelectBox>
+
             </div>
         
         </Card>
