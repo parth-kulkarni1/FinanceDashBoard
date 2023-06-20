@@ -1,14 +1,11 @@
 import React, {useState, useContext} from "react"
 
-import { useNavigate } from "react-router-dom";
-
-import { Button, Form } from "react-bootstrap";
-
-import { verifyToken } from "Components/Axios/AxiosCommands";
-
-
 import './Home.css'
 import { userContext } from "Components/Context/UserContext";
+import { useNavigate } from "react-router-dom";
+import { verifyToken } from "Components/Axios/AxiosCommands";
+
+import { Button, Form } from "react-bootstrap";
 
 function Home(){
 
@@ -60,6 +57,14 @@ function Home(){
                     <div>
                         <h3>Login using Up Token</h3>
                     </div>
+
+                    <small>This is experimental app. Things may not be perfect.
+
+                           Your token will not be stored in any shape or form.
+
+                           A session is created and persisted through express session which creates cookies on your side.
+
+                    </small>
 
                 <div>
                     <Form className="login-input" noValidate >
