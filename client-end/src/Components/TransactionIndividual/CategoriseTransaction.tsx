@@ -15,12 +15,6 @@ function CategoriseTransaction(){
     const {setUser} = useContext(userContext);
     const navigate = useNavigate();
 
-    const currentTransactionCategory = state.transactionIndividual.relationships.category.data.id
-
-    const [searchInput, setSearchInput] = useState<string>('')
-    const [categoriesList, setCategoriesList] = useState<categoryList[] | null>(null);
-    const [filteredCategories, setFilteredCategories] = useState<categoryList[] | null>(null);
-
     useEffect(() => {
 
         async function fetchCategories(){
@@ -44,10 +38,21 @@ function CategoriseTransaction(){
 
         }
 
-        fetchCategories()
+        if(state.transactionIndividual === null){
+            navigate('/dashboard')
+        }
 
-    }, [navigate, setUser])
+        else{
+            fetchCategories()
+        }
 
+    }, [navigate, setUser, state.transactionIndividual])
+
+    const currentTransactionCategory = state.transactionIndividual.relationships.category.data.id
+
+    const [searchInput, setSearchInput] = useState<string>('')
+    const [categoriesList, setCategoriesList] = useState<categoryList[] | null>(null);
+    const [filteredCategories, setFilteredCategories] = useState<categoryList[] | null>(null);
     
     useEffect(() => {
         if (categoriesList) {
@@ -96,7 +101,10 @@ function CategoriseTransaction(){
 
     }
 
-
+    // Check if transactionIndividual is null before rendering JSX
+    if (!state.transactionIndividual) {
+        return null;
+    }
 
     return(
         <div>

@@ -1,5 +1,5 @@
 import axios, {AxiosResponse } from 'axios'
-import {AccountResource, ListTransactionsResponse} from 'up-bank-api'
+import {AccountResource, ListTransactionsResponse, Pong} from 'up-bank-api'
 import {MonthlyCategoryDetailed, categoryList, cookieSessionExpiryRoute, merchantResponse, pastTransactionsHistory, postObj } from './TypesAxios';
 
 
@@ -20,7 +20,7 @@ export async function checkSessionExpiration(){
 
 export async function verifyToken(token: string){
 
-    const {data} = await axios.get<any>(`/api/login/${token}`)
+    const {data} = await axios.get<Pong | null>(`/api/login/${token}`)
 
     return data
 

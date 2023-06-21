@@ -1,5 +1,5 @@
 /* Component that displays monthly detailed categorical information */
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { UpContext } from "Components/Context/UpContext";
 import { MonthlyCategoryDetailed, childCategoryType } from "Components/Axios/TypesAxios";
 import "./MonthlyCategory.css";
@@ -10,6 +10,7 @@ import { AiFillCar } from "react-icons/ai";
 import { BsPersonFill } from "react-icons/bs";
 import { Modal, Pagination } from "react-bootstrap";
 import moment from "moment";
+import {useNavigate, useParams } from "react-router-dom";
 
 function capitalizeFirstWord(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -34,6 +35,16 @@ const renderImage = (category) => (
 
 function CategoryInsight() {
   const { state } = useContext(UpContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+
+  if(state.monthCategoryDetailedInfo === null){
+      navigate('/dashboard')
+    }
+
+  }, [navigate, state.monthCategoryDetailedInfo])
+
   const [show, setShow] = useState<boolean>(false);
   const [showModal2, setShowModal2] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -41,6 +52,9 @@ function CategoryInsight() {
   const [currentCategory, setCurrentCategory] = useState<MonthlyCategoryDetailed | null>(null);
   const [currentCategoryModal2, setCurrentCategoryModal2] = useState<childCategoryType | null>(null);
   const [totalPages, setTotalPages] = useState<number>(0);
+
+  const {monthId} = useParams();
+  // Split the date string into month and year
 
   const handleClose = () => setShow(false);
   const handleCloseModal2 = () => {
@@ -63,9 +77,15 @@ function CategoryInsight() {
     setShowModal2(true);
   }
 
+  // Check if monthlyCategoryInfo is null before rendering JSX
+  if (!state.monthCategoryDetailedInfo) {
+    return null;
+  }
+
+
   return (
     <div className="category-container">
-      <h3 className="text-center mt-3">Category Insights - Month Of </h3>
+      <h3 className="text-center mt-3">Category Insights - {monthId}</h3>
       <div className="row category-labels-container">
         {state.monthCategoryDetailedInfo.map((category, index) => (
           <div className="col-lg-4 col-md-6 mb-5" key={index}>

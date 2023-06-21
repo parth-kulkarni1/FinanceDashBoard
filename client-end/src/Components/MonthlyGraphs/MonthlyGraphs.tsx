@@ -197,7 +197,7 @@ function MonthlyGraphs(){
                 
               <SelectBox value={value} onValueChange={handleRequestedCategoryMonth} placeholder="Select a month">
 
-                    {lastTwelveMonths.reverse().map((month) => (
+                    {lastTwelveMonths.map((month) => (
 
                         <SelectBoxItem key={month} value={month} text={month}  />
                         
@@ -248,7 +248,7 @@ function MonthlyGraphs(){
                 
               <SelectBox value={value} onValueChange={handleRequestedPopularItemsMonth} placeholder="Select a month">
 
-                    {lastTwelveMonths.reverse().map((month) => (
+                    {lastTwelveMonths.map((month) => (
 
                         <SelectBoxItem key={month} value={month} text={month}  />
                         

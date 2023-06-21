@@ -8,7 +8,7 @@ import { brandFetchSearch, pastTransactionsHistory, MonthlyCategoryDetailed } fr
 
 export type TransactionInsightType = {
     merchantInfo: brandFetchSearch | null
-    transaction: pastTransactionsHistory
+    transaction: pastTransactionsHistory | null
 }
 
 export type addTags = {
@@ -26,7 +26,7 @@ export interface CurrentState{
     monthlySpendingTotal: string | null, 
     transactionIndividual: TransactionResource | null,
     transactionInsight: TransactionInsightType | null,
-    monthCategoryDetailedInfo: MonthlyCategoryDetailed[] | null
+    monthCategoryDetailedInfo: MonthlyCategoryDetailed[] | null,
     addTag: addTags | null
 }
 
