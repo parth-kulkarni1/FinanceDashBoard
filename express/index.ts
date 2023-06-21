@@ -9,7 +9,7 @@ const app = express();
 const port = process.env.PORT || 4000;
 const cors = require('cors')
 const cors_options = {
-  origin: "http://localhost:3000/",
+  origin: "https://up-bank-dashboard.netlify.app/",
   credentials: true
 }
 
@@ -26,8 +26,8 @@ app.use(
     cookie: {
       httpOnly: true,
       maxAge: 1800000,
-      secure: false, // Set 'secure' to true to ensure the cookie is sent only over HTTPS
-      sameSite: 'strict',
+      secure: true, // Set 'secure' to true to ensure the cookie is sent only over HTTPS
+      sameSite: 'none',
     },
     resave: false,
   })
