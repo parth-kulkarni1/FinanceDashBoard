@@ -1,1 +1,1 @@
-/api/* https://financedashboard-production.up.railway.app/:splat  200
+/api/*     https://financedashboard-production.up.railway.app/api/:splat  200
