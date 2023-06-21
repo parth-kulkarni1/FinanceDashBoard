@@ -20,6 +20,7 @@ import { addTagsToTransactionHandler } from "../Controller/transactions.tag.add.
 import { deleteTagToTransactionHandler } from "../Controller/transaction.tags.delete.controller";
 import { getAllCategoriesHandler } from "../Controller/categories.all.controller";
 import { changeTransactionCategoryHandler } from "../Controller/categories.change.controller";
+import { checkSessionExpiry } from "../Controller/session.expiryCheck";
 
 declare module 'express-session' {
   interface SessionData {
@@ -30,40 +31,42 @@ declare module 'express-session' {
 const router = Router();
 
 
-router.get('/login/:id', loginController)
+router.get('/api/login/:id', loginController)
 
-router.get('/cookie', getCookieHandler)
+router.get('/api/cookie', getCookieHandler)
 
-router.post('/logout', logoutHandler)
+router.get('/api/check-session', checkSessionExpiry)
 
-router.get('/accounts/transactional', getTransactionalAccountHandler) 
+router.post('/api/logout', logoutHandler)
 
-router.get('/accounts/savings', getSaversAccountHandler)
+router.get('/api/accounts/transactional', getTransactionalAccountHandler) 
 
-router.get('/accounts/transactional/transactions', getTransactionsHandler)
+router.get('/api/accounts/savings', getSaversAccountHandler)
 
-router.get('/accounts/trasactional/monthly', getMonthlyTotalSpendingHandler)
+router.get('/api/accounts/transactional/transactions', getTransactionsHandler)
 
-router.get('/transactions/next', getNextPaginatedDataHandler)
+router.get('/api/accounts/trasactional/monthly', getMonthlyTotalSpendingHandler)
 
-router.get('/transactional/:id', getMerchantInfoHandler)
+router.get('/api/transactions/next', getNextPaginatedDataHandler)
 
-router.post('/transactional/category', getTransactionSummaryHandler)
+router.get('/api/transactional/:id', getMerchantInfoHandler)
 
-router.get('/transactional/monthly/graph/:id', getIncomeVsSpendingHandler)
+router.post('/api/transactional/category', getTransactionSummaryHandler)
 
-router.get('/transactions/monthly/categories/:id', getMonthlyParentCategorySpending)
+router.get('/api/transactional/monthly/graph/:id', getIncomeVsSpendingHandler)
 
-router.get('/transactional/monthly/top10/:id', getTransactionsTop5Handler)
+router.get('/api/transactions/monthly/categories/:id', getMonthlyParentCategorySpending)
 
-router.get('/transactional/monthly/category/detailed/:id', getMonthlyCategoryInsightsHandler)
+router.get('/api/transactional/monthly/top10/:id', getTransactionsTop5Handler)
 
-router.post('/transactions/add/tag', addTagsToTransactionHandler)
+router.get('/api/transactional/monthly/category/detailed/:id', getMonthlyCategoryInsightsHandler)
 
-router.delete('/transactions/delete/tag', deleteTagToTransactionHandler)
+router.post('/api/transactions/add/tag', addTagsToTransactionHandler)
 
-router.get('/categories', getAllCategoriesHandler)
+router.delete('/api/transactions/delete/tag', deleteTagToTransactionHandler)
 
-router.patch('/categories/change', changeTransactionCategoryHandler)
+router.get('/api/categories', getAllCategoriesHandler)
+
+router.patch('/api/categories/change', changeTransactionCategoryHandler)
 
 export {router};

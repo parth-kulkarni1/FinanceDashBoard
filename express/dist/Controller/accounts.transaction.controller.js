@@ -23,17 +23,15 @@ function getTransactionalAccountHandler(req, res, next) {
                 const tranactionalAccount = yield config_1.up.accounts.retrieve(config_1.TRANSACTIONAL_ID);
                 res.json(tranactionalAccount.data);
             }
-            else {
-                return res.redirect('/');
-            }
         }
         catch (e) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {
                 // Handle error returned from Up API
-                console.log(e.response.data.errors);
+                res.json({ error: "Something has gone wrong.." });
             }
-            // Unexpected error
-            throw e;
+            else {
+                res.json({ error: "Something has gone wrong.." });
+            }
         }
     });
 }

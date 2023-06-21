@@ -1,5 +1,5 @@
 import React, {useState, useEffect,useContext} from "react";
-import { getMonthlySummary, getMonthlyCategorySummary, getMonthlyPopularCompanies, getMonthlyCategoryDetailed } from "Components/Axios/AxiosCommands";
+import { getMonthlySummary, getMonthlyCategorySummary, getMonthlyPopularCompanies, getMonthlyCategoryDetailed, checkSessionExpiration, logout } from "Components/Axios/AxiosCommands";
 import { getLastTwelveMonthsWithYears } from "Components/TransactionInsight/functions";
 import { UpContext } from "Components/Context/UpContext";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import { SelectBox, SelectBoxItem } from "@tremor/react";
 
 
 import moment from "moment";
+import { userContext } from "Components/Context/UserContext";
 
 type Categorical = {
     category: string,
@@ -25,6 +26,8 @@ type MonthlyData = {
 function MonthlyGraphs(){
 
     const {dispatch}= useContext(UpContext)
+    const {setUser} = useContext(userContext);
+    
     const navigate = useNavigate();
 
     const lastTwelveMonths = getLastTwelveMonthsWithYears();
@@ -45,45 +48,41 @@ function MonthlyGraphs(){
       };
 
     useEffect(() => {
-                
-        async function handleMonthlyGraph(){
+
+        async function fetchData(){
+
+            const response = await checkSessionExpiration();
+
+            if(response.expired){
+
+                // Call the logout method to destory session and set local user state to null and navigate to login page
+                await logout()
+                setUser(null)
+                navigate('/')
+                // Early return so api calls below are not made.
+                return
+
+            }
 
             const currentMonthString = moment().startOf('month').format('MMMM YYYY')
 
-            const data = await getMonthlySummary(currentMonthString);
-
-            setMonthlyData(data)
+            const monthlyGraphData = await getMonthlySummary(currentMonthString);
+            setMonthlyData(monthlyGraphData)
             setSelectedMonth(currentMonthString)
 
-        }
-
-        async function getCategorySummary(){
-            const currentMonthString = moment().startOf('month').format('MMMM YYYY')
-
-            const data = await getMonthlyCategorySummary(currentMonthString)
-
-            setMonthlyCategoicalData(data)
+            const categorySummaryData = await getMonthlyCategorySummary(currentMonthString)
+            setMonthlyCategoicalData(categorySummaryData)
             setSelectedMonthCategory(currentMonthString)
 
-        }
-
-
-        async function getTop10Companies(){
-            const currentMonthString = moment().startOf('month').format('MMMM YYYY')
-
-            const data = await getMonthlyPopularCompanies(currentMonthString)
-
-            setMonthlyPopularTrips(data);
+            const top10CompaniesData = await getMonthlyPopularCompanies(currentMonthString)
+            setMonthlyPopularTrips(top10CompaniesData);
             setSelecteMonthPopularItems(currentMonthString)
 
-
         }
 
-        handleMonthlyGraph();
-        getCategorySummary();
-        getTop10Companies();
+        fetchData();
 
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
 

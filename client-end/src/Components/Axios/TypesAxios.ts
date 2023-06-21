@@ -36,6 +36,10 @@ export type brandFetchSearch = {
     brandId: string
 }
 
+export type cookieSessionExpiryRoute = {
+    expired: boolean
+}
+
 export type merchantResponse = {
     brandInfo: brandFetchSearch, 
     domainInfo: brandFetchReterive

@@ -55,6 +55,13 @@ export type listTop5CompaniesResponse = {
 }
   
 
+export type sessionExpiredType = {
+    message: string
+}
+
+export type sessionExpiredRouteType = {
+    expired: boolean
+}
   
 export type errorType = {
     error: string

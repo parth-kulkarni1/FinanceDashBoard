@@ -1,7 +1,10 @@
 import React, {useState, useEffect, useContext} from "react"
 import { UpContext } from "Components/Context/UpContext";
-import { getCategories, categoriseTransaction } from "Components/Axios/AxiosCommands";
+import { getCategories, categoriseTransaction, checkSessionExpiration, logout } from "Components/Axios/AxiosCommands";
 import { categoryList } from "Components/Axios/TypesAxios";
+import { useNavigate } from "react-router-dom";
+import { userContext } from "Components/Context/UserContext";
+
 
 import { Card, Metric, Divider, Button } from "@tremor/react";
 import { Form } from "react-bootstrap";
@@ -9,6 +12,9 @@ import { Form } from "react-bootstrap";
 function CategoriseTransaction(){
 
     const {state, dispatch} = useContext(UpContext);
+    const {setUser} = useContext(userContext);
+    const navigate = useNavigate();
+
     const currentTransactionCategory = state.transactionIndividual.relationships.category.data.id
 
     const [searchInput, setSearchInput] = useState<string>('')
@@ -19,6 +25,20 @@ function CategoriseTransaction(){
 
         async function fetchCategories(){
 
+            const response = await checkSessionExpiration();
+
+            if(response.expired){
+
+                // Session has been expired so we will logout and navigate user
+                await logout();
+                setUser(null);
+                navigate('/')
+
+                // Early returns so other api calls are not made
+                return
+
+            }
+
             const data = await getCategories();
             setCategoriesList(data)
 
@@ -26,7 +46,7 @@ function CategoriseTransaction(){
 
         fetchCategories()
 
-    }, [])
+    }, [navigate, setUser])
 
     
     useEffect(() => {

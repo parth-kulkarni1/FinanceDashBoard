@@ -9,12 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logoutHandler = void 0;
-function logoutHandler(req, res, next) {
+exports.checkSessionExpiry = void 0;
+function checkSessionExpiry(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        delete req.session.myData;
-        req.session.destroy(() => { });
-        res.redirect('/');
+        if (req.session && req.session.cookie.expires && new Date() > req.session.cookie.expires) {
+            // Session has expired
+            res.json({ expired: true });
+        }
+        else {
+            // Session is still active
+            res.json({ expired: false });
+        }
     });
 }
-exports.logoutHandler = logoutHandler;
+exports.checkSessionExpiry = checkSessionExpiry;

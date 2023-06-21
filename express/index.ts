@@ -2,13 +2,14 @@ import express, { Router } from "express";
 import { router } from "./Routes/Routes";
 import session from "express-session";
 import helmet from 'helmet'
+import checkSessionExpiration from "./sessionExpiration";
 
 
 const app = express();
 const port = process.env.PORT || 4000;
 const cors = require('cors')
 const cors_options = {
-  origin: "https://main--stately-crisp-41befd.netlify.app",
+  origin: "http://localhost:3000/",
   credentials: true
 }
 
@@ -20,13 +21,13 @@ app.use(helmet())
 
 app.use(
   session({
-    secret: 'keyboard cat',
+    secret: process.env.SECERT_KEY as string,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      maxAge: 900000,
-      secure: true, // Set 'secure' to true to ensure the cookie is sent only over HTTPS
-      sameSite: 'none',
+      maxAge: 1800000,
+      secure: false, // Set 'secure' to true to ensure the cookie is sent only over HTTPS
+      sameSite: 'strict',
     },
     resave: false,
   })
@@ -35,6 +36,8 @@ app.use(
 // Set trust proxy if you are behind a reverse proxy like railways.app
 // This allows secure cookies to work properly
 app.set('trust proxy', 1);
+
+app.use(checkSessionExpiration)
 
 app.use(router)
 
