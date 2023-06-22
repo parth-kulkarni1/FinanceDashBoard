@@ -37,8 +37,6 @@ app.use(
 // This allows secure cookies to work properly
 app.set('trust proxy', 1);
 
-app.use(checkSessionExpiration)
-
 app.use(router)
 
 app.listen(port, () => console.log("sucessfully created on port 4000"));
