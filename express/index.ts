@@ -18,24 +18,25 @@ app.use(express.json());
 app.use(cors(cors_options)) 
 app.use(helmet())
 
+// Set trust proxy if you are behind a reverse proxy like railways.app
+// This allows secure cookies to work properly
+app.set('trust proxy', 1);
+
 
 app.use(
   session({
     secret: process.env.SECERT_KEY as string,
     saveUninitialized: false,
+    name: "UP-APP-COOKIE",
     cookie: {
-      httpOnly: true,
+      httpOnly: false,
       maxAge: 1800000,
       secure: true, // Set 'secure' to true to ensure the cookie is sent only over HTTPS
-      sameSite: 'none',
+      sameSite: 'none'
     },
-    resave: false,
   })
 );
 
-// Set trust proxy if you are behind a reverse proxy like railways.app
-// This allows secure cookies to work properly
-app.set('trust proxy', 1);
 
 app.use(router)
 
