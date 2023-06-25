@@ -29,7 +29,7 @@ app.use(
     saveUninitialized: false,
     name: "UP-APP-COOKIE",
     cookie: {
-      httpOnly: false,
+      httpOnly: true,
       maxAge: 1800000,
       secure: true, // Set 'secure' to true to ensure the cookie is sent only over HTTPS
       sameSite: 'none'
