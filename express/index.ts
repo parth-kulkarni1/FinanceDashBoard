@@ -32,7 +32,7 @@ app.use(
       httpOnly: true,
       maxAge: 1800000,
       secure: true, // Set 'secure' to true to ensure the cookie is sent only over HTTPS
-      sameSite: 'none'
+      sameSite: 'strict'
     },
   })
 );
