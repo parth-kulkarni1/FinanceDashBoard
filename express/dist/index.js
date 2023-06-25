@@ -12,7 +12,7 @@ const app = (0, express_1.default)();
 const port = process.env.PORT || 4000;
 const cors = require('cors');
 const cors_options = {
-    origin: ["https://up-bank-dashboard.netlify.app", "https://up-bank-dashboard.netlify.app/"],
+    origin: ["https://up-bank-dashboard.netlify.app", "https://up-bank-dashboard.netlify.app/", "http://localhost:3000/"],
     credentials: true
 };
 app.use(express_1.default.json());

@@ -13,7 +13,7 @@ exports.logoutHandler = void 0;
 function logoutHandler(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         req.session.destroy((err) => {
-            res.clearCookie("UP-APP-COOKIE", { path: "/" }).send('cleared cookie');
+            res.clearCookie("UP-APP-COOKIE", { path: "/" }).send('clearedd cookie');
         });
     });
 }
