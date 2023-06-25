@@ -37,6 +37,7 @@ app.use(
   })
 );
 
+app.use(checkSessionExpiration)
 
 app.use(router)
 
