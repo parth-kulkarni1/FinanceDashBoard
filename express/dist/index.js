@@ -29,7 +29,7 @@ app.use((0, express_session_1.default)({
         httpOnly: true,
         maxAge: 1800000,
         secure: true,
-        sameSite: 'strict'
+        sameSite: 'none'
     },
 }));
 app.use(sessionExpiration_1.default);
