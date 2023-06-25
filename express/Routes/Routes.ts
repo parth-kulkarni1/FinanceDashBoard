@@ -24,7 +24,7 @@ import { checkSessionExpiry } from "../Controller/session.expiryCheck";
 
 declare module 'express-session' {
   interface SessionData {
-    myData: boolean;
+    myData: boolean | null;
   }
 }
 
