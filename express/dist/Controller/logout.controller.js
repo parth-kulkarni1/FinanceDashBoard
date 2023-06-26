@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.logoutHandler = void 0;
 function logoutHandler(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        req.session.myData = null;
+        delete req.session.myData;
         req.session.destroy((err) => {
             res.clearCookie("UP-APP-COOKIE", { path: "/" }).send('clearedd cookie');
         });

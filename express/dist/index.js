@@ -35,7 +35,7 @@ const sessionOptions = {
     resave: false,
     name: "UP-APP-COOKIE",
     cookie: {
-        domain: "https://financedashboard-production.up.railway.app/",
+        domain: "https://up-bank-dashboard.netlify.app/",
         httpOnly: true,
         maxAge: 1800000,
         secure: true,
