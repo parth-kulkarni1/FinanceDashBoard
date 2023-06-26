@@ -9,6 +9,10 @@ function PrivateRoutes({children}){
     useEffect(() => {
         async function fetchCookie(){
             const res = await findCookie();
+
+            console.log(res, "cookie response")
+
+
             setLoggedIn(res);
         }
 
