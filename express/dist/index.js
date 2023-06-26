@@ -23,7 +23,8 @@ app.use((0, helmet_1.default)());
 app.set('trust proxy', 1);
 app.use((0, express_session_1.default)({
     secret: "keyboard cat",
-    saveUninitialized: false,
+    saveUninitialized: true,
+    resave: false,
     name: "UP-APP-COOKIE",
     cookie: {
         httpOnly: true,

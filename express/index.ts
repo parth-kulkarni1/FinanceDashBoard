@@ -26,7 +26,8 @@ app.set('trust proxy', 1);
 app.use(
   session({
     secret: "keyboard cat",
-    saveUninitialized: false,
+    saveUninitialized: true,
+    resave: false,
     name: "UP-APP-COOKIE",
     cookie: {
       httpOnly: true,
