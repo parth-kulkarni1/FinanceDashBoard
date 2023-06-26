@@ -7,8 +7,6 @@ export async function getTransactionalAccountHandler(req: Request, res: Response
 
     try {
 
-        if(req.session.myData){
-
           const accounts = await up.accounts.list()
           const transactionAccountID = accounts.data.find(val => val.attributes.accountType == "TRANSACTIONAL")?.id as string
 
@@ -17,9 +15,7 @@ export async function getTransactionalAccountHandler(req: Request, res: Response
           const tranactionalAccount = await up.accounts.retrieve(TRANSACTIONAL_ID as string)
   
           res.json(tranactionalAccount.data)
-  
-        }
-        
+          
         } catch (e) {
           if (isUpApiError(e)) {
             // Handle error returned from Up API

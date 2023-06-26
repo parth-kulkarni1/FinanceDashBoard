@@ -16,13 +16,11 @@ function getTransactionalAccountHandler(req, res, next) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            if (req.session.myData) {
-                const accounts = yield config_1.up.accounts.list();
-                const transactionAccountID = (_a = accounts.data.find(val => val.attributes.accountType == "TRANSACTIONAL")) === null || _a === void 0 ? void 0 : _a.id;
-                (0, config_1.setTransactionalId)(transactionAccountID);
-                const tranactionalAccount = yield config_1.up.accounts.retrieve(config_1.TRANSACTIONAL_ID);
-                res.json(tranactionalAccount.data);
-            }
+            const accounts = yield config_1.up.accounts.list();
+            const transactionAccountID = (_a = accounts.data.find(val => val.attributes.accountType == "TRANSACTIONAL")) === null || _a === void 0 ? void 0 : _a.id;
+            (0, config_1.setTransactionalId)(transactionAccountID);
+            const tranactionalAccount = yield config_1.up.accounts.retrieve(config_1.TRANSACTIONAL_ID);
+            res.json(tranactionalAccount.data);
         }
         catch (e) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {
