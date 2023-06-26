@@ -27,6 +27,8 @@ function Dashboard(){
 
       if(response.expired){
 
+        console.log("Session has expired at Dashboard.tsx")
+
         // Call the logout method to destory session and set local user state to null and navigate to login page
 
         await logout()

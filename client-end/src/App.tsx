@@ -35,8 +35,6 @@ function App() {
             <Route path="/category/:monthId" element={<PrivateRoutes><CategoryInsight /></PrivateRoutes>} />
             <Route path="/transaction/categorise/:transactionId" element={<PrivateRoutes><CategoriseTransaction /></PrivateRoutes>} />
             <Route path="/about" element={<About />} />
-            {/* Catch-all route */}
-            <Route path="*" element={<PrivateRoutes><Dashboard /></PrivateRoutes>} />
           </Routes>
           <Footer />
         </UpContextProvider>
