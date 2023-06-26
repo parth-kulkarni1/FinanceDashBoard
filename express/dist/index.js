@@ -18,7 +18,6 @@ const cors_options = {
     credentials: true
 };
 const redisURL = process.env.REDIS_URL;
-const redisPassword = process.env.REDISPASSWORD;
 let redisClient = (0, redis_1.createClient)({ url: redisURL });
 redisClient.connect().catch(console.error);
 let redisStore = new connect_redis_1.default({
@@ -33,9 +32,10 @@ app.use((0, helmet_1.default)());
 app.set('trust proxy', 1);
 const sessionOptions = {
     store: redisStore,
-    secret: "keyboard cat",
-    saveUninitialized: true,
+    secret: process.env.SECERT_KEY,
+    saveUninitialized: false,
     resave: false,
+    name: "UP-APP-COOKIE",
     cookie: {
         httpOnly: true,
         maxAge: 1800000,
