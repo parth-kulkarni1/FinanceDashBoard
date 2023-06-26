@@ -3,7 +3,6 @@ import { router } from "./Routes/Routes";
 import checkSessionExpiration from "./sessionExpiration";
 
 import session, { SessionOptions } from "express-session";
-import helmet from 'helmet'
 import {createClient} from 'redis';
 import RedisStore from "connect-redis"
 
@@ -28,7 +27,6 @@ let redisStore = new RedisStore({
 
 app.use(express.json());
 app.use(cors(cors_options));
-app.use(helmet());
 
 // Set trust proxy if you are behind a reverse proxy like railways.app
 // This allows secure cookies to work properly
@@ -41,6 +39,7 @@ const sessionOptions: SessionOptions = {
     resave: false,
     name: "UP-APP-COOKIE",
     cookie: {
+      domain: "https://financedashboard-production.up.railway.app/",
       httpOnly: true,
       maxAge: 1800000,
       secure: true, // Set 'secure' to true to ensure the cookie is sent only over HTTPS

@@ -7,7 +7,6 @@ const express_1 = __importDefault(require("express"));
 const Routes_1 = require("./Routes/Routes");
 const sessionExpiration_1 = __importDefault(require("./sessionExpiration"));
 const express_session_1 = __importDefault(require("express-session"));
-const helmet_1 = __importDefault(require("helmet"));
 const redis_1 = require("redis");
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const app = (0, express_1.default)();
@@ -26,7 +25,6 @@ let redisStore = new connect_redis_1.default({
 });
 app.use(express_1.default.json());
 app.use(cors(cors_options));
-app.use((0, helmet_1.default)());
 // Set trust proxy if you are behind a reverse proxy like railways.app
 // This allows secure cookies to work properly
 app.set('trust proxy', 1);
@@ -37,6 +35,7 @@ const sessionOptions = {
     resave: false,
     name: "UP-APP-COOKIE",
     cookie: {
+        domain: "https://financedashboard-production.up.railway.app/",
         httpOnly: true,
         maxAge: 1800000,
         secure: true,
