@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react"
 import { UpContext } from "Components/Context/UpContext";
-import { getCategories, categoriseTransaction, logout } from "Components/Axios/AxiosCommands";
+import { getCategories, categoriseTransaction } from "Components/Axios/AxiosCommands";
 import { categoryList } from "Components/Axios/TypesAxios";
 import { useNavigate } from "react-router-dom";
 import { userContext } from "Components/Context/UserContext";

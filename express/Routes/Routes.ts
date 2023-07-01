@@ -5,7 +5,6 @@ import { Request, Response } from "express";
 import jwt from 'jsonwebtoken'
 
 import { loginController } from "../Controller/login.controller";
-import { getCookieHandler } from "../Controller/cookie.controller";
 import { logoutHandler } from "../Controller/logout.controller";
 import { getTransactionalAccountHandler } from "../Controller/accounts.transaction.controller";
 import { getSaversAccountHandler } from "../Controller/accounts.savers.controller";
@@ -28,9 +27,7 @@ import { authenticateToken } from "../authMiddleware";
 const router = Router();
 
 
-router.get('/api/login/:id', authenticateToken, loginController)
-
-router.get('/api/cookie', authenticateToken, getCookieHandler);
+router.get('/api/login/:id', loginController)
 
 router.get('/api/check-session', authenticateToken, checkSessionExpiry);
 
@@ -67,7 +64,11 @@ router.get('/api/categories', authenticateToken, getAllCategoriesHandler);
 router.patch('/api/categories/change', authenticateToken, changeTransactionCategoryHandler);
 
 router.get('/api/checkTokenValidity', authenticateToken, (req: Request, res: Response) => {
-    res.status(200).json(true);
+
+    console.log("value  set here for jwta")
+
+
+    res.json(true);
 });
   
 

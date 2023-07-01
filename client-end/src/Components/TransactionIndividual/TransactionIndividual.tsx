@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { UpContext } from "Components/Context/UpContext";
-import { getTransactionInformation, getPreviousTransactions, logout } from "Components/Axios/AxiosCommands";
+import { getTransactionInformation, getPreviousTransactions } from "Components/Axios/AxiosCommands";
 import { merchantResponse, pastTransactionsHistory } from "Components/Axios/TypesAxios";
 
 import { Card, Title, Subtitle, Divider } from "@tremor/react";

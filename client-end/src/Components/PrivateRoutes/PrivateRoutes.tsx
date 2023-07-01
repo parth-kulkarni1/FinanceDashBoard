@@ -6,12 +6,23 @@ function PrivateRoutes({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const isAuthenticated = token !== null;
 
-    setLoggedIn(isAuthenticated);
+    if(token !== null){
+
+      console.log("set tp true")
+
+
+      setLoggedIn(true)
+    }
+
+    else{
+      console.log("set to false")
+      setLoggedIn(false)
+    }
+    
   }, []);
 
-  if (!loggedIn) {
+  if (loggedIn === false) {
     return <Navigate to="/" />;
   } else {
     return children;

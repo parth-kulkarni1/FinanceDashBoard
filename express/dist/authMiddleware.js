@@ -30,7 +30,7 @@ const authenticateToken = (req, res, next) => {
     var _a;
     const token = (_a = req.header('Authorization')) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
     if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
+        return res.json({ message: 'No token provided' });
     }
     try {
         const decoded = jsonwebtoken_1.default.verify(token, config_1.jwtConfig.jwtSecret);
@@ -38,9 +38,9 @@ const authenticateToken = (req, res, next) => {
     }
     catch (err) {
         if (err instanceof jsonwebtoken_1.TokenExpiredError) {
-            return res.status(401).json({ message: 'Token expired' });
+            return res.json({ message: 'Token expired' });
         }
-        return res.status(401).json({ message: 'Invalid token' });
+        return res.json({ message: 'Invalid token' });
     }
 };
 exports.authenticateToken = authenticateToken;

@@ -6,17 +6,11 @@ import {getMonthlyTransactionalTotal, getSavingsAccount, getTransactionalAccount
 import TransactionsTable from 'Components/TransactionalTable/TransactionalTable';
 import { UpContext } from 'Components/Context/UpContext';
 import MonthlyGraphs from 'Components/MonthlyGraphs/MonthlyGraphs';
-import { userContext } from 'Components/Context/UserContext';
-import { useNavigate } from 'react-router-dom';
-
 /* Import of 3rd party libraries */ 
 
 function Dashboard(){
 
   const {dispatch} = useContext(UpContext);
-  const {setUser} = useContext(userContext)
-  const navigate = useNavigate();
-
   useEffect(() => {
 
     async function getInformationUser(){
@@ -35,9 +29,10 @@ function Dashboard(){
 
     getInformationUser();
 
-  }, [dispatch, navigate, setUser])
+  }, [dispatch])
 
     return(
+
       <div className='container'>
         <div className='row'>
           <div className='col'>
@@ -60,8 +55,6 @@ function Dashboard(){
       </div>
 
     </div>
-
-    
     
     )
 

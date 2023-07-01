@@ -19,13 +19,17 @@ export async function loginController(req:Request<{id: string}>, res:Response<st
           const token = jwt.sign({id: authenticated.meta.id}, jwtConfig.jwtSecret, {
             expiresIn: jwtConfig.jwtExpiration
           })
+
+          res.json(token)
+
+          return
+
         }
 
         else{
           res.json(null)
         }
 
-        res.json(token)
   
     } catch(e){
   

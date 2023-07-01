@@ -4,7 +4,6 @@ exports.router = void 0;
 const express_1 = require("express");
 require('dotenv').config();
 const login_controller_1 = require("../Controller/login.controller");
-const cookie_controller_1 = require("../Controller/cookie.controller");
 const logout_controller_1 = require("../Controller/logout.controller");
 const accounts_transaction_controller_1 = require("../Controller/accounts.transaction.controller");
 const accounts_savers_controller_1 = require("../Controller/accounts.savers.controller");
@@ -25,8 +24,7 @@ const session_expiryCheck_1 = require("../Controller/session.expiryCheck");
 const authMiddleware_1 = require("../authMiddleware");
 const router = (0, express_1.Router)();
 exports.router = router;
-router.get('/api/login/:id', authMiddleware_1.authenticateToken, login_controller_1.loginController);
-router.get('/api/cookie', authMiddleware_1.authenticateToken, cookie_controller_1.getCookieHandler);
+router.get('/api/login/:id', login_controller_1.loginController);
 router.get('/api/check-session', authMiddleware_1.authenticateToken, session_expiryCheck_1.checkSessionExpiry);
 router.post('/api/logout', authMiddleware_1.authenticateToken, logout_controller_1.logoutHandler);
 router.get('/api/accounts/transactional', authMiddleware_1.authenticateToken, accounts_transaction_controller_1.getTransactionalAccountHandler);
@@ -45,5 +43,6 @@ router.delete('/api/transactions/delete/tag', authMiddleware_1.authenticateToken
 router.get('/api/categories', authMiddleware_1.authenticateToken, categories_all_controller_1.getAllCategoriesHandler);
 router.patch('/api/categories/change', authMiddleware_1.authenticateToken, categories_change_controller_1.changeTransactionCategoryHandler);
 router.get('/api/checkTokenValidity', authMiddleware_1.authenticateToken, (req, res) => {
-    res.status(200).json(true);
+    console.log("value  set here for jwta");
+    res.json(true);
 });

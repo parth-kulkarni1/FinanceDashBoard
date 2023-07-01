@@ -10,7 +10,6 @@ import { SelectBox, SelectBoxItem } from "@tremor/react";
 
 
 import moment from "moment";
-import { userContext } from "Components/Context/UserContext";
 
 type Categorical = {
     category: string,
@@ -26,7 +25,6 @@ type MonthlyData = {
 function MonthlyGraphs(){
 
     const {dispatch}= useContext(UpContext)
-    const {setUser} = useContext(userContext);
     
     const navigate = useNavigate();
 

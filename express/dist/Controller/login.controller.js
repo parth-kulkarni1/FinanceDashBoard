@@ -28,11 +28,12 @@ function loginController(req, res, next) {
                 const token = jsonwebtoken_1.default.sign({ id: authenticated.meta.id }, config_2.jwtConfig.jwtSecret, {
                     expiresIn: config_2.jwtConfig.jwtExpiration
                 });
+                res.json(token);
+                return;
             }
             else {
                 res.json(null);
             }
-            res.json(token);
         }
         catch (e) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {

@@ -16,24 +16,28 @@ export const UserContextProvider = ({ children }: userContextProviderProps) => {
   const [user, setUser] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const checkUserAuthentication = async () => {
+    const checkTokenAuthentication = async () => {
       try {
-        const response = await checkTokenValidity(); // Make an API request to your backend to check token validity
+        const storedToken = localStorage.getItem("token"); // Retrieves the token from localStorage
+        if (storedToken) {
+          setUser(true);
+        } else {
+          const response = await checkTokenValidity(); // Make an API request to your backend to check token validity
 
-        if(response !== true){
+          if(response !== true){
             setUser(false)
-        }
+          }
 
-        else{
+          else{
             setUser(true)
+          }
         }
-
       } catch (error) {
         // Handle error if necessary
       }
     };
 
-    checkUserAuthentication();
+    checkTokenAuthentication();
   }, []);
 
   return (
