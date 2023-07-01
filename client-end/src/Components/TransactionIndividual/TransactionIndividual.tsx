@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { UpContext } from "Components/Context/UpContext";
-import { getTransactionInformation, getPreviousTransactions, checkSessionExpiration, logout } from "Components/Axios/AxiosCommands";
+import { getTransactionInformation, getPreviousTransactions, logout } from "Components/Axios/AxiosCommands";
 import { merchantResponse, pastTransactionsHistory } from "Components/Axios/TypesAxios";
 
 import { Card, Title, Subtitle, Divider } from "@tremor/react";
@@ -29,20 +29,6 @@ function TransactionIndividaul(){ // This component will list each each transact
     useEffect(() => {
 
         async function getTransactInformation(){
-
-            const response = await checkSessionExpiration();
-
-            if(response.expired){
-
-                // Session has expired so we will destory the user, update local context and navigate to home page
-                await logout();
-                setUser(null);
-                navigate('/')
-
-                // Early return so below api calls are not made
-                return
-
-            }
             
             const merchantName = state.transactionIndividual.attributes.description; 
             const categoryName = state.transactionIndividual.relationships.category.data.id;

@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react"
 import { UpContext } from "Components/Context/UpContext";
-import { getCategories, categoriseTransaction, checkSessionExpiration, logout } from "Components/Axios/AxiosCommands";
+import { getCategories, categoriseTransaction, logout } from "Components/Axios/AxiosCommands";
 import { categoryList } from "Components/Axios/TypesAxios";
 import { useNavigate } from "react-router-dom";
 import { userContext } from "Components/Context/UserContext";
@@ -18,20 +18,6 @@ function CategoriseTransaction(){
     useEffect(() => {
 
         async function fetchCategories(){
-
-            const response = await checkSessionExpiration();
-
-            if(response.expired){
-
-                // Session has been expired so we will logout and navigate user
-                await logout();
-                setUser(null);
-                navigate('/')
-
-                // Early returns so other api calls are not made
-                return
-
-            }
 
             const data = await getCategories();
             setCategoriesList(data)

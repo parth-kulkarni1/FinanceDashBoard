@@ -29,11 +29,13 @@ function Home(){
             return
         }
 
-        const res = await verifyToken(token);
+        const jwtToken = await verifyToken(token);
 
-        if(res){
+        if(jwtToken){
 
             setUser(true)
+
+            localStorage.setItem('token', jwtToken)
 
             navigate('/dashboard')
 

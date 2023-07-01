@@ -8,10 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.loginController = void 0;
 const config_1 = require("../config");
 const up_bank_api_1 = require("up-bank-api");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const config_2 = require("../config");
 function loginController(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -19,8 +24,15 @@ function loginController(req, res, next) {
             config_1.up.updateApiKey(token);
             (0, config_1.setToken)(token);
             const authenticated = yield config_1.up.util.ping();
-            req.session.myData = true; // set cookie to login
-            res.json(authenticated);
+            if (authenticated.meta.id) {
+                const token = jsonwebtoken_1.default.sign({ id: authenticated.meta.id }, config_2.jwtConfig.jwtSecret, {
+                    expiresIn: config_2.jwtConfig.jwtExpiration
+                });
+            }
+            else {
+                res.json(null);
+            }
+            res.json(token);
         }
         catch (e) {
             if ((0, up_bank_api_1.isUpApiError)(e)) {

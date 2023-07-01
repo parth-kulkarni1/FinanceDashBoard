@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import {up,TOKEN, setToken} from '../config'
 import { Pong, isUpApiError } from "up-bank-api";
+import jwt from 'jsonwebtoken'
+import { jwtConfig } from "../config";
 
-export async function loginController(req:Request<{id: string}>, res:Response<Pong | null>, next:NextFunction) {
+export async function loginController(req:Request<{id: string}>, res:Response<string | null>, next:NextFunction) {
 
     try{  
         const token = req.params.id
@@ -12,10 +14,18 @@ export async function loginController(req:Request<{id: string}>, res:Response<Po
         setToken(token)
   
         const authenticated = await up.util.ping()
-  
-        req.session.myData = true // set cookie to login
-        
-        res.json(authenticated)
+
+        if(authenticated.meta.id){
+          const token = jwt.sign({id: authenticated.meta.id}, jwtConfig.jwtSecret, {
+            expiresIn: jwtConfig.jwtExpiration
+          })
+        }
+
+        else{
+          res.json(null)
+        }
+
+        res.json(token)
   
     } catch(e){
   

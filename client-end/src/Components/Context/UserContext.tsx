@@ -1,54 +1,44 @@
-import { findCookie } from "Components/Axios/AxiosCommands";
-import React, {createContext, useState, useEffect } from "react";
-
+import React, { createContext, useState, useEffect } from "react";
+import { checkTokenValidity } from "Components/Axios/AxiosCommands";
 
 type userContextType = {
-    user: boolean | null, 
-    setUser: React.Dispatch<React.SetStateAction<boolean | null >>
-}
+  user: boolean | null;
+  setUser: React.Dispatch<React.SetStateAction<boolean | null>>;
+};
 
 type userContextProviderProps = {
-    children: React.ReactNode
-}
+  children: React.ReactNode;
+};
 
-export const userContext = createContext({} as userContextType)
+export const userContext = createContext({} as userContextType);
 
+export const UserContextProvider = ({ children }: userContextProviderProps) => {
+  const [user, setUser] = useState<boolean | null>(null);
 
-export const UserContextProvider = ({children}: userContextProviderProps) =>{
+  useEffect(() => {
+    const checkUserAuthentication = async () => {
+      try {
+        const response = await checkTokenValidity(); // Make an API request to your backend to check token validity
 
-    const [user,setUser] = useState<boolean | null>(null); // Null as the user is logged in but this value can change
+        if(response !== true){
+            setUser(false)
+        }
 
-    useEffect(() =>{
+        else{
+            setUser(true)
+        }
 
-        async function InitaliseCookie(){
-    
-            const userData: boolean = await findCookie(); // find the cookie and see if it's present
-    
-    
-            if (userData){
-                setUser(true)
-            
-            }
-    
-            else{
-                setUser(false)
-            }
-    
-            }
-    
-    
-            InitaliseCookie();
-    
+      } catch (error) {
+        // Handle error if necessary
+      }
+    };
 
-    }, [])
+    checkUserAuthentication();
+  }, []);
 
-
-    return (
-        <userContext.Provider value = {{user, setUser}}>
-            {children}
-        </userContext.Provider>
-
-    )
-
-
-} 
+  return (
+    <userContext.Provider value={{ user, setUser }}>
+      {children}
+    </userContext.Provider>
+  );
+};

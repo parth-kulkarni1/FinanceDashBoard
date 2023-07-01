@@ -18,5 +18,11 @@ const setSaversId = (newID: string) => {
     SAVERS_ID = newID;
 }
 
+export const jwtConfig = {
+  jwtSecret: 'keyboard cat',
+  jwtExpiration: '1h' // Token expiration time.
+
+}
+
 export { up, TRANSACTIONAL_ID, SAVERS_ID, TOKEN, setToken, setTransactionalId, setSaversId };
 

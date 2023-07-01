@@ -1,34 +1,21 @@
-import {Navigate } from "react-router-dom";
-import {useEffect, useState} from "react"
-import { findCookie } from "Components/Axios/AxiosCommands";
+import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-function PrivateRoutes({children}){
+function PrivateRoutes({ children }) {
+  const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
 
-    const [loggedIn, setLoggedIn] = useState<boolean | null>(null);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const isAuthenticated = token !== null;
 
-    useEffect(() => {
-        async function fetchCookie(){
-            const res = await findCookie();
+    setLoggedIn(isAuthenticated);
+  }, []);
 
-            console.log(res, "cookie response")
-
-
-            setLoggedIn(res);
-        }
-
-        fetchCookie();
-    }, [])
-
-    if(loggedIn === false){
-        return (
-            <Navigate to='/'></Navigate>
-        )
-    }
-
-    else{
-        return children
-    }
-
+  if (!loggedIn) {
+    return <Navigate to="/" />;
+  } else {
+    return children;
+  }
 }
 
 export default PrivateRoutes;

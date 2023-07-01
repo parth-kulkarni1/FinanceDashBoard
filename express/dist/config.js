@@ -1,7 +1,7 @@
 "use strict";
 // This file contains the UP-BANK third party wrapper initilization 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setSaversId = exports.setTransactionalId = exports.setToken = exports.TOKEN = exports.SAVERS_ID = exports.TRANSACTIONAL_ID = exports.up = void 0;
+exports.setSaversId = exports.setTransactionalId = exports.setToken = exports.TOKEN = exports.SAVERS_ID = exports.TRANSACTIONAL_ID = exports.up = exports.jwtConfig = void 0;
 const up_bank_api_1 = require("up-bank-api");
 const up = new up_bank_api_1.UpApi();
 exports.up = up;
@@ -23,3 +23,7 @@ const setSaversId = (newID) => {
     exports.SAVERS_ID = SAVERS_ID = newID;
 };
 exports.setSaversId = setSaversId;
+exports.jwtConfig = {
+    jwtSecret: 'keyboard cat',
+    jwtExpiration: '1h' // Token expiration time.
+};

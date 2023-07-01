@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import {up,SAVERS_ID,setSaversId} from '../config'
 import { AccountResource, isUpApiError } from "up-bank-api";
 
+
 export async function getSaversAccountHandler(req:Request, res:Response<AccountResource>, next:NextFunction){
     
     try {

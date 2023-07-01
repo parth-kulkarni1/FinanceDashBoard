@@ -1,5 +1,5 @@
 import React, {useState, useEffect,useContext} from "react";
-import { getMonthlySummary, getMonthlyCategorySummary, getMonthlyPopularCompanies, getMonthlyCategoryDetailed, checkSessionExpiration, logout } from "Components/Axios/AxiosCommands";
+import { getMonthlySummary, getMonthlyCategorySummary, getMonthlyPopularCompanies, getMonthlyCategoryDetailed} from "Components/Axios/AxiosCommands";
 import { getLastTwelveMonthsWithYears } from "Components/TransactionInsight/functions";
 import { UpContext } from "Components/Context/UpContext";
 import { useNavigate } from "react-router-dom";
@@ -51,18 +51,6 @@ function MonthlyGraphs(){
 
         async function fetchData(){
 
-            const response = await checkSessionExpiration();
-
-            if(response.expired){
-
-                // Call the logout method to destory session and set local user state to null and navigate to login page
-                await logout()
-                setUser(null)
-                navigate('/')
-                // Early return so api calls below are not made.
-                return
-
-            }
 
             const currentMonthString = moment().startOf('month').format('MMMM YYYY')
 

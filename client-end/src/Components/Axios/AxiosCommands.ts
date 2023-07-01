@@ -1,28 +1,30 @@
 import axios, {AxiosResponse } from 'axios'
-import {AccountResource, ListTransactionsResponse, Pong} from 'up-bank-api'
-import {MonthlyCategoryDetailed, categoryList, cookieSessionExpiryRoute, merchantResponse, pastTransactionsHistory, postObj } from './TypesAxios';
+import {AccountResource, ListTransactionsResponse} from 'up-bank-api'
+import {MonthlyCategoryDetailed, categoryList, merchantResponse, pastTransactionsHistory, postObj } from './TypesAxios';
 
 
 /* This contains all axios commands made to the backend */
 
 
-export async function findCookie(){
-    const {data} = await axios.get<boolean>('/api/cookie')
-
-    return data
-}
-
-export async function checkSessionExpiration(){
-    const {data} = await axios.get<cookieSessionExpiryRoute>('/api/check-session')
-
-    return data
-}
-
 export async function verifyToken(token: string){
 
-    const {data} = await axios.get<Pong | null>(`/api/login/${token}`)
+    const {data} = await axios.get<string | null>(`/api/login/${token}`)
+
+    console.log(data, "loginn")
 
     return data
+
+}
+
+export async function checkTokenValidity(){
+
+    const {data} = await axios.get<any>('/api/checkTokenValidity', {
+        headers: {
+          Authorization: `Bearer hdhfdhs`,
+        },
+      });
+  
+      return data;
 
 }
 

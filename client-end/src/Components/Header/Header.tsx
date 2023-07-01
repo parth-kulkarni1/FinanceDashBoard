@@ -3,7 +3,6 @@ import React, {useContext} from "react";
 import { useNavigate } from "react-router-dom";
 
 import { userContext } from "Components/Context/UserContext";
-import { logout } from "Components/Axios/AxiosCommands";
 
 
 
@@ -16,14 +15,12 @@ function Header(){
 
     async function handleLogout(){
 
-        await logout();
-       
+        localStorage.removeItem('token');
+        
         setUser(null)
 
         navigate('/')
         
-
-
     }
 
     return(

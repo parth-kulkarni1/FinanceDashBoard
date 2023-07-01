@@ -1,6 +1,8 @@
 import express, { Router } from "express";
 require('dotenv').config();
 
+import { Request, Response } from "express";
+import jwt from 'jsonwebtoken'
 
 import { loginController } from "../Controller/login.controller";
 import { getCookieHandler } from "../Controller/cookie.controller";
@@ -21,52 +23,52 @@ import { deleteTagToTransactionHandler } from "../Controller/transaction.tags.de
 import { getAllCategoriesHandler } from "../Controller/categories.all.controller";
 import { changeTransactionCategoryHandler } from "../Controller/categories.change.controller";
 import { checkSessionExpiry } from "../Controller/session.expiryCheck";
-
-declare module 'express-session' {
-  interface SessionData {
-    myData: boolean | null;
-  }
-}
+import { authenticateToken } from "../authMiddleware";
 
 const router = Router();
 
 
-router.get('/api/login/:id', loginController)
+router.get('/api/login/:id', authenticateToken, loginController)
 
-router.get('/api/cookie', getCookieHandler)
+router.get('/api/cookie', authenticateToken, getCookieHandler);
 
-router.get('/api/check-session', checkSessionExpiry)
+router.get('/api/check-session', authenticateToken, checkSessionExpiry);
 
-router.post('/api/logout', logoutHandler)
+router.post('/api/logout', authenticateToken, logoutHandler);
 
-router.get('/api/accounts/transactional', getTransactionalAccountHandler) 
+router.get('/api/accounts/transactional', authenticateToken, getTransactionalAccountHandler);
 
-router.get('/api/accounts/savings', getSaversAccountHandler)
+router.get('/api/accounts/savings', authenticateToken, getSaversAccountHandler);
 
-router.get('/api/accounts/transactional/transactions', getTransactionsHandler)
+router.get('/api/accounts/transactional/transactions', authenticateToken, getTransactionsHandler);
 
-router.get('/api/accounts/trasactional/monthly', getMonthlyTotalSpendingHandler)
+router.get('/api/accounts/trasactional/monthly', authenticateToken, getMonthlyTotalSpendingHandler);
 
-router.get('/api/transactions/next', getNextPaginatedDataHandler)
+router.get('/api/transactions/next', authenticateToken, getNextPaginatedDataHandler);
 
-router.get('/api/transactional/:id', getMerchantInfoHandler)
+router.get('/api/transactional/:id', authenticateToken, getMerchantInfoHandler);
 
-router.post('/api/transactional/category', getTransactionSummaryHandler)
+router.post('/api/transactional/category', authenticateToken, getTransactionSummaryHandler);
 
-router.get('/api/transactional/monthly/graph/:id', getIncomeVsSpendingHandler)
+router.get('/api/transactional/monthly/graph/:id', authenticateToken, getIncomeVsSpendingHandler);
 
-router.get('/api/transactions/monthly/categories/:id', getMonthlyParentCategorySpending)
+router.get('/api/transactions/monthly/categories/:id', authenticateToken, getMonthlyParentCategorySpending);
 
-router.get('/api/transactional/monthly/top10/:id', getTransactionsTop5Handler)
+router.get('/api/transactional/monthly/top10/:id', authenticateToken, getTransactionsTop5Handler);
 
-router.get('/api/transactional/monthly/category/detailed/:id', getMonthlyCategoryInsightsHandler)
+router.get('/api/transactional/monthly/category/detailed/:id', authenticateToken, getMonthlyCategoryInsightsHandler);
 
-router.post('/api/transactions/add/tag', addTagsToTransactionHandler)
+router.post('/api/transactions/add/tag', authenticateToken, addTagsToTransactionHandler);
 
-router.delete('/api/transactions/delete/tag', deleteTagToTransactionHandler)
+router.delete('/api/transactions/delete/tag', authenticateToken, deleteTagToTransactionHandler);
 
-router.get('/api/categories', getAllCategoriesHandler)
+router.get('/api/categories', authenticateToken, getAllCategoriesHandler);
 
-router.patch('/api/categories/change', changeTransactionCategoryHandler)
+router.patch('/api/categories/change', authenticateToken, changeTransactionCategoryHandler);
+
+router.get('/api/checkTokenValidity', authenticateToken, (req: Request, res: Response) => {
+    res.status(200).json(true);
+});
+  
 
 export {router};
