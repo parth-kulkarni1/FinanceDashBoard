@@ -14,6 +14,7 @@ function Dashboard(){
   const {dispatch} = useContext(UpContext);
   const {setUser} = useContext(userContext)
   const navigate = useNavigate();
+  
   useEffect(() => {
 
     async function getInformationUser(){
@@ -51,7 +52,7 @@ function Dashboard(){
 
     getInformationUser();
 
-  }, [dispatch])
+  }, [dispatch, navigate, setUser])
 
     return(
 
