@@ -64,7 +64,8 @@ function Home(){
 
                            Your token will not be stored in any shape or form.
 
-                           A session is created and persisted through express session which creates cookies on your side.
+                           A session is created and persisted through JWT session which creates a token on your side
+                           through local storage. You can view it once you login.
 
                     </small>
 

@@ -19,8 +19,8 @@ const setSaversId = (newID: string) => {
 }
 
 export const jwtConfig = {
-  jwtSecret: 'keyboard cat',
-  jwtExpiration: '1h' // Token expiration time.
+  jwtSecret: process.env.JWT_SECRET as string,
+  jwtExpiration: process.env.JWT_EXPIRE_TIME as string // Token expiration time.
 
 }
 

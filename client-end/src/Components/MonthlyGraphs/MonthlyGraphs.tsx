@@ -1,7 +1,8 @@
 import React, {useState, useEffect,useContext} from "react";
-import { getMonthlySummary, getMonthlyCategorySummary, getMonthlyPopularCompanies, getMonthlyCategoryDetailed} from "Components/Axios/AxiosCommands";
+import { getMonthlySummary, getMonthlyCategorySummary, getMonthlyPopularCompanies, getMonthlyCategoryDetailed, checkTokenValidity} from "Components/Axios/AxiosCommands";
 import { getLastTwelveMonthsWithYears } from "Components/TransactionInsight/functions";
 import { UpContext } from "Components/Context/UpContext";
+import { userContext } from "Components/Context/UserContext";
 import { useNavigate } from "react-router-dom";
 
 import { Card, BarChart, Title, DonutChart, List, ListItem } from "@tremor/react";
@@ -24,8 +25,9 @@ type MonthlyData = {
 
 function MonthlyGraphs(){
 
-    const {dispatch}= useContext(UpContext)
-    
+    const {dispatch} = useContext(UpContext)
+    const {setUser} = useContext(userContext)
+
     const navigate = useNavigate();
 
     const lastTwelveMonths = getLastTwelveMonthsWithYears();
@@ -49,6 +51,21 @@ function MonthlyGraphs(){
 
         async function fetchData(){
 
+        
+            // Let's initially check if the session has expired or not before proceeding to call these methods 
+
+            const response = await checkTokenValidity(); // Make an API request to your backend to check token validity
+
+            if(response !== true){
+
+                // This means that the token has expired
+                localStorage.removeItem('token') // Remove the token 
+                setUser(null) // Null the user
+                navigate('/') // Navigate user to home page
+                return 
+
+                // Return from method to prevent calling other promises below.
+            }
 
             const currentMonthString = moment().startOf('month').format('MMMM YYYY')
 

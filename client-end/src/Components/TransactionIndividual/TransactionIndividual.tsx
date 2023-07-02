@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { UpContext } from "Components/Context/UpContext";
-import { getTransactionInformation, getPreviousTransactions } from "Components/Axios/AxiosCommands";
+import { getTransactionInformation, getPreviousTransactions, checkTokenValidity } from "Components/Axios/AxiosCommands";
 import { merchantResponse, pastTransactionsHistory } from "Components/Axios/TypesAxios";
 
 import { Card, Title, Subtitle, Divider } from "@tremor/react";
@@ -29,6 +29,21 @@ function TransactionIndividaul(){ // This component will list each each transact
     useEffect(() => {
 
         async function getTransactInformation(){
+
+            
+            // Let's initially check if the session has expired or not before proceeding to call these methods 
+            const response = await checkTokenValidity(); // Make an API request to your backend to check token validity
+
+            if(response !== true){
+
+                // This means that the token has expired
+                localStorage.removeItem('token') // Remove the token 
+                setUser(null) // Null the user
+                navigate('/') // Navigate user to home page
+                return 
+                // Return from method to prevent calling other promises below.
+                
+            }
             
             const merchantName = state.transactionIndividual.attributes.description; 
             const categoryName = state.transactionIndividual.relationships.category.data.id;
@@ -49,8 +64,6 @@ function TransactionIndividaul(){ // This component will list each each transact
         else{
             
             getTransactInformation();
-
-
         }
 
 

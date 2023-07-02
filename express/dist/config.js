@@ -24,6 +24,6 @@ const setSaversId = (newID) => {
 };
 exports.setSaversId = setSaversId;
 exports.jwtConfig = {
-    jwtSecret: 'keyboard cat',
-    jwtExpiration: '1h' // Token expiration time.
+    jwtSecret: process.env.JWT_SECRET,
+    jwtExpiration: process.env.JWT_EXPIRE_TIME // Token expiration time.
 };

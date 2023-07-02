@@ -1,7 +1,10 @@
 /* Component that displays monthly detailed categorical information */
 import React, { useContext, useState, useEffect } from "react";
 import { UpContext } from "Components/Context/UpContext";
+import { userContext } from "Components/Context/UserContext";
 import { MonthlyCategoryDetailed, childCategoryType } from "Components/Axios/TypesAxios";
+import {useNavigate, useParams } from "react-router-dom";
+import { checkTokenValidity } from "Components/Axios/AxiosCommands";
 import "./MonthlyCategory.css";
 
 import { Card, Metric, Text, Icon, Flex, Button } from "@tremor/react";
@@ -10,7 +13,6 @@ import { AiFillCar } from "react-icons/ai";
 import { BsPersonFill } from "react-icons/bs";
 import { Modal, Pagination } from "react-bootstrap";
 import moment from "moment";
-import {useNavigate, useParams } from "react-router-dom";
 
 function capitalizeFirstWord(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -35,15 +37,42 @@ const renderImage = (category) => (
 
 function CategoryInsight() {
   const { state } = useContext(UpContext);
+  const {setUser} = useContext(userContext);
   const navigate = useNavigate();
 
   useEffect(() => {
 
-  if(state.monthCategoryDetailedInfo === null){
-      navigate('/dashboard')
+    
+    // Let's initially check if the session has expired or not before proceeding to call these methods 
+
+    async function getTokenValidation(){
+
+      const response = await checkTokenValidity(); // Make an API request to your backend to check token validity
+
+      if(response !== true){
+
+        // This means that the token has expired
+
+        localStorage.removeItem('token') // Remove the token 
+
+        setUser(null) // Null the user
+
+        navigate('/') // Navigate user to home page
+        
+        return 
+        // Return from method to prevent calling other promises below.
+        
+      }
+
     }
 
-  }, [navigate, state.monthCategoryDetailedInfo])
+    if(state.monthCategoryDetailedInfo === null){
+        navigate('/dashboard')
+    }
+
+    getTokenValidation();
+
+  }, [navigate, setUser, state.monthCategoryDetailedInfo])
 
   const [show, setShow] = useState<boolean>(false);
   const [showModal2, setShowModal2] = useState<boolean>(false);
