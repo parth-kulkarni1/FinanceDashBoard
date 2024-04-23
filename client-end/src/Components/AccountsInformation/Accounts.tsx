@@ -17,13 +17,13 @@ function Accounts(){
        
                     <Card maxWidth="max-w-md" marginTop="mt-5" decoration="top" decorationColor="indigo">
                         <Text>{state.trasactionalAccountBalance.attributes.displayName} Account</Text>
-                        <Metric>${state.trasactionalAccountBalance.attributes.balance.value}</Metric>
+                        <Metric>${0}</Metric>
                     </Card>
 
 
                     <Card maxWidth="max-w-md" marginTop="mt-5" decoration="top" decorationColor="indigo">
                         <Text>{state.savingsAccountBalance.attributes.displayName} Account</Text>
-                        <Metric>${state.savingsAccountBalance.attributes.balance.value}</Metric>
+                        <Metric>${0}</Metric>
                     </Card>
 
 
